@@ -226,7 +226,8 @@ export function janela(periodo: PeriodoRelatorio, agora = new Date()) {
     const inicio = new Date(`${dataIso(agora).slice(0, 7)}-01T03:00:00Z`);
     const inicioAnterior = new Date(inicio);
     inicioAnterior.setUTCMonth(inicioAnterior.getUTCMonth() - 1);
-    const fimAnterior = new Date(inicioAnterior.getTime() + (agora.getTime() - inicio.getTime()));
+    // mesmo número de dias do mês atual, sem passar do fim do mês anterior (ex.: 31/03 x fevereiro)
+    const fimAnterior = new Date(Math.min(inicioAnterior.getTime() + (agora.getTime() - inicio.getTime()), inicio.getTime()));
     const mes = formatarMesAno(agora);
     return {
       inicio,

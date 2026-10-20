@@ -77,7 +77,13 @@ export function NovoItem({ catalogo, agoraIso, localPadraoId, modo }: NovoItemPr
   }
 
   return (
-    <form action={enviar}>
+    // onSubmit (e não action): com action o React limpa os campos ao terminar, mesmo quando o servidor recusa
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        enviar(new FormData(e.currentTarget));
+      }}
+    >
       <div className="grid grid-cols-12 gap-8">
         <div className="col-span-5 flex flex-col gap-3">
           <button

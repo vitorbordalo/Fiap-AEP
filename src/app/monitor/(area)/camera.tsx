@@ -35,7 +35,11 @@ export function Camera({ usuario }: { usuario: string }) {
           video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
           audio: false,
         });
-        if (cancelado || !video.current) return;
+        if (cancelado || !video.current) {
+          // a câmera abriu depois de o monitor sair da tela: desliga para não ficar presa
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
         video.current.srcObject = stream;
         await video.current.play();
         setEstado("pronta");

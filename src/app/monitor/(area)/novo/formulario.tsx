@@ -83,7 +83,14 @@ export function FormularioMonitor({ catalogo, agoraIso, localPadraoId }: Formula
         </div>
       </header>
 
-      <form action={enviar} className="flex flex-1 flex-col">
+      {/* onSubmit (e não action): com action o React limpa os campos ao terminar, mesmo quando o servidor recusa */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          enviar(new FormData(e.currentTarget));
+        }}
+        className="flex flex-1 flex-col"
+      >
         <div className="flex flex-col gap-6 px-5 pt-5 pb-4">
           <div className="flex items-center gap-4 rounded-xl border border-border bg-surface p-3">
             <div className="relative size-20 shrink-0 overflow-hidden rounded-lg">

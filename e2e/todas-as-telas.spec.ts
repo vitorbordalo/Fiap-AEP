@@ -78,6 +78,11 @@ test("gestor: dashboard nos três períodos, histórico, CSV e configurações a
 
 test("404 tem a cara do app", async ({ browser }) => {
   const { pagina } = await entrar(browser, "Aluno", "Aluno 404");
-  await pagina.goto("/aluno/itens/00000000-0000-4000-8000-000000000000");
-  await expect(pagina.getByText("Não encontramos esta página.", { exact: false })).toBeVisible();
+  // id que não existe e id malformado: 404 com a cara do app, nunca a tela de erro
+  for (const url of ["/aluno/itens/00000000-0000-4000-8000-000000000000", "/aluno/itens/abc", "/aluno/pedidos/abc"]) {
+    // com loading.tsx a resposta já começou em streaming: o Next mantém 200 e marca noindex
+    await pagina.goto(url);
+    await expect(pagina.getByText("Não encontramos esta página.", { exact: false }), url).toBeVisible();
+    await expect(pagina.getByText("Algo deu errado"), url).toHaveCount(0);
+  }
 });
