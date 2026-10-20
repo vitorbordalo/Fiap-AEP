@@ -1,0 +1,21 @@
+{
+  "_comentario": "Cadastros reais da FIAP. Edite as listas e rode: npm run db:cadastros. Só acrescenta ou atualiza pelo nome; nunca apaga.",
+  "locais": [
+    { "nome": "Achados e Perdidos", "horario_retirada": "Seg a sex, 8h às 22h" },
+    { "nome": "Sala de TI", "horario_retirada": "Seg a sex, 17h às 23h" }
+  ],
+  "salas": ["Sala 101", "Sala 102", "Sala 115", "Sala 201", "Sala 202", "Sala 205", "Sala 210", "Sala 301", "Sala 302", "Sala 304", "Sala 401", "Sala 402", "Sala 403", "Laboratório 501", "Auditório"],
+  "turmas": ["1TDSA", "1TDSB", "2TDSA", "2TDSB", "1ESPA", "2ESPA", "2ESPH", "3ESPA", "3ESPB", "1CCPA"],
+  "categorias": [
+    { "nome": "Celular", "icone": "smartphone", "cor": "#22C55E" },
+    { "nome": "Fone", "icone": "headphones", "cor": "#EC4899" },
+    { "nome": "Notebook", "icone": "laptop", "cor": "#A855F7" },
+    { "nome": "Carregador", "icone": "plug-zap", "cor": "#F59E0B" },
+    { "nome": "Garrafa", "icone": "glass-water", "cor": "#3B82F6" },
+    { "nome": "Casaco", "icone": "shirt", "cor": "#14B8A6" },
+    { "nome": "Mochila", "icone": "backpack", "cor": "#10B981" },
+    { "nome": "Documento", "icone": "id-card", "cor": "#F43F5E", "foto_sensivel": true },
+    { "nome": "Guarda-chuva", "icone": "umbrella", "cor": "#06B6D4" },
+    { "nome": "Outros", "icone": "ellipsis", "cor": "#737373" }
+  ]
+}

@@ -64,7 +64,17 @@ Com o template padrão (`{{ .ConfirmationURL }}`) o login também funciona, mas 
 
 **E-mails em produção:** o servidor de e-mail embutido do Supabase envia poucas mensagens por hora e serve só para testes. Para uso real, configure um SMTP próprio em **Project Settings > Auth > SMTP Settings**.
 
-## 4. Popular com dados de exemplo
+## 4. Cadastros reais (produção)
+
+Antes de os monitores começarem, o banco precisa das salas, turmas, locais e categorias reais. Edite `scripts/cadastros/cadastros.json` com as listas da FIAP e rode:
+
+```bash
+npm run db:cadastros
+```
+
+O script só acrescenta ou atualiza pelo nome: pode rodar de novo sempre que surgir uma sala ou turma nova. Ele nunca apaga nada e não cria dados fictícios. Em produção, use este passo **em vez** do seed abaixo.
+
+## 4b. Popular com dados de exemplo (desenvolvimento e demonstração)
 
 ```bash
 npm run db:seed            # só roda se o banco ainda não tiver itens

@@ -16,7 +16,8 @@
     "db:placeholders": "node scripts/seed/gerar-placeholders.mjs",
     "test:integracao": "vitest run --config vitest.integracao.config.mts",
     "test:e2e": "playwright test",
-    "test:e2e:supabase": "node scripts/e2e-supabase.mjs"
+    "test:e2e:supabase": "node scripts/e2e-supabase.mjs",
+    "db:cadastros": "node --env-file=.env.local scripts/cadastros/index.mjs"
   },
   "engines": {
     "node": ">=20.9"

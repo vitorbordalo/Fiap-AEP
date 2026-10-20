@@ -40,7 +40,7 @@ Abra [localhost:3000/login](http://localhost:3000/login). Sem Supabase configura
 ## Ligar ao Supabase
 
 1. Siga [docs/supabase.md](docs/supabase.md): criar o projeto, aplicar as migrations, configurar o Auth (link mágico, cadastro público desligado) e preencher o `.env.local`.
-2. `npm run db:seed` para os dados de exemplo (opcional).
+2. `npm run db:cadastros` para as salas, turmas e categorias reais (edite `scripts/cadastros/cadastros.json`), ou `npm run db:seed` para dados de exemplo.
 3. `npm run dev`. Com as chaves no `.env.local`, as mesmas telas passam a usar o banco real, e o login vira link mágico no e-mail institucional.
 
 ## Deploy na Vercel
@@ -65,6 +65,7 @@ Sem as variáveis do Supabase, o deploy responde com uma mensagem de configuraç
 | `npm run test:e2e` | Playwright no modo demonstração (fluxos, todas as telas, acessibilidade) |
 | `npm run test:e2e:supabase` | Os mesmos testes com o app em modo Supabase, sem Docker |
 | `npm run db:validar` | Aplica as migrations num Postgres em memória |
+| `npm run db:cadastros` | Salas, turmas, locais e categorias reais no Supabase (sem apagar nada) |
 | `npm run db:seed` | Dados de exemplo no Supabase (`-- --reset` recria) |
 
 Detalhes e pré-requisitos em [docs/testes.md](docs/testes.md).
