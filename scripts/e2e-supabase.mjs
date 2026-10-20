@@ -30,6 +30,22 @@ const gateway = await iniciarGateway(local, await portaLivre());
 const portaApp = await portaLivre();
 let app;
 
+// Ctrl+C no meio: derruba app, gateway e Postgres em vez de deixá-los rodando
+let encerrando = false;
+async function limpar() {
+  if (encerrando) return;
+  encerrando = true;
+  encerrarArvore(app);
+  await gateway.parar().catch(() => undefined);
+  await local.parar().catch(() => undefined);
+}
+for (const sinal of ["SIGINT", "SIGTERM"]) {
+  process.once(sinal, async () => {
+    await limpar();
+    process.exit(130);
+  });
+}
+
 const env = {
   ...process.env,
   NEXT_PUBLIC_SUPABASE_URL: gateway.url,
@@ -67,8 +83,6 @@ try {
   console.error(`\n✗ ${erro instanceof Error ? erro.message : erro}`);
   codigo = 1;
 } finally {
-  encerrarArvore(app);
-  await gateway.parar();
-  await local.parar();
+  await limpar();
 }
 process.exit(codigo);
