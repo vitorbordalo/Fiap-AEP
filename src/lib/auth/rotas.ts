@@ -24,10 +24,23 @@ export function areaDaRota(pathname: string): Papel | null {
   return PAPEIS.find((papel) => pathname === AREA_DO_PAPEL[papel] || pathname.startsWith(`${AREA_DO_PAPEL[papel]}/`)) ?? null;
 }
 
-/** Aceita só caminhos internos, para o ?next= não virar um redirecionamento aberto. */
+const ORIGEM_FICTICIA = "https://interno.invalid";
+
+/**
+ * Aceita só caminhos internos, para o ?next= não virar um redirecionamento aberto.
+ * O parser de URL ignora TAB e quebras de linha ("/\t/evil.com" vira "//evil.com"), então além
+ * das checagens de texto o caminho precisa continuar na mesma origem depois de interpretado.
+ */
 export function caminhoSeguro(next: string | null | undefined): string | null {
-  if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) return null;
-  return next;
+  if (!next || !next.startsWith("/") || next.startsWith("//")) return null;
+  if (/[\u0000-\u001f\u007f\\]/.test(next)) return null;
+  try {
+    const url = new URL(next, ORIGEM_FICTICIA);
+    if (url.origin !== ORIGEM_FICTICIA) return null;
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return null;
+  }
 }
 
 type EntradaDecisao = {

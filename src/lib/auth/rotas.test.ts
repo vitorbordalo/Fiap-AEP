@@ -86,4 +86,11 @@ describe("caminhoSeguro", () => {
     expect(caminhoSeguro("/\\malicioso.com")).toBeNull();
     expect(caminhoSeguro("/aluno")).toBe("/aluno");
   });
+
+  it("recusa caracteres que o parser de URL ignora (TAB, quebra de linha)", () => {
+    expect(caminhoSeguro("/\t/malicioso.com")).toBeNull();
+    expect(caminhoSeguro("/\n/malicioso.com")).toBeNull();
+    expect(caminhoSeguro("/%09/malicioso.com")).toBe("/%09/malicioso.com");
+    expect(caminhoSeguro("/aluno/pedidos?novo=1")).toBe("/aluno/pedidos?novo=1");
+  });
 });
