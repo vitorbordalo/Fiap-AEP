@@ -1,9 +1,12 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { emailPermitido, esquemaEmail } from "@/lib/auth/email";
-import { caminhoSeguro, LOGIN_ALUNO } from "@/lib/auth/rotas";
+import { caminhoSeguro, destinoAposLogin, LOGIN_ALUNO } from "@/lib/auth/rotas";
+import { COOKIE_SESSAO_DEMO, ehPapel, escreverSessaoDemo } from "@/lib/auth/sessao-demo";
 import { dominiosPermitidos, envPublico } from "@/lib/env";
+import { MODO_DEMO } from "@/lib/modo";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -53,8 +56,36 @@ export async function enviarLinkMagico(_anterior: EstadoLogin, formData: FormDat
   return { status: "enviado", email };
 }
 
+/**
+ * Login do modo demonstração: aceita qualquer usuário e senha. A senha é ignorada e nunca é guardada;
+ * o cookie leva só o perfil escolhido e o nome digitado. Não existe quando o Supabase está configurado.
+ */
+export async function entrarDemo(formData: FormData) {
+  if (!MODO_DEMO) throw new Error("Login de demonstração desligado.");
+
+  const papel = formData.get("papel");
+  if (!ehPapel(papel)) throw new Error("Perfil inválido.");
+  const nome = formData.get("usuario")?.toString().trim().slice(0, 60) || NOME_PADRAO[papel];
+
+  (await cookies()).set(COOKIE_SESSAO_DEMO, escreverSessaoDemo({ papel, nome }), {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  });
+
+  const next = caminhoSeguro(formData.get("next")?.toString());
+  redirect(destinoAposLogin(papel, next ? `?next=${encodeURIComponent(next)}` : ""));
+}
+
+const NOME_PADRAO = { aluno: "Aluno Teste", monitor: "Monitor Teste", equipe: "Equipe Teste", gestor: "Coordenação" };
+
 export async function sair() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
+  if (MODO_DEMO) {
+    (await cookies()).delete(COOKIE_SESSAO_DEMO);
+  } else {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+  }
   redirect(LOGIN_ALUNO);
 }

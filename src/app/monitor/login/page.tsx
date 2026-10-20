@@ -14,6 +14,7 @@ export default async function LoginMonitorPage({ searchParams }: PageProps<"/mon
       descricao="Entre com seu e-mail institucional para cadastrar itens encontrados."
       placeholder="seunome@fiap.com.br"
       outroLogin={{ href: LOGIN_ALUNO, rotulo: "Sou aluno" }}
+      papelInicial="monitor"
       next={typeof next === "string" ? next : undefined}
       erro={typeof erro === "string" ? erro : undefined}
     />

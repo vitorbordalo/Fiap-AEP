@@ -1,7 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { decidirRota } from "@/lib/auth/rotas";
+import { COOKIE_SESSAO_DEMO, lerSessaoDemo } from "@/lib/auth/sessao-demo";
 import { envPublico } from "@/lib/env";
+import { MODO_DEMO } from "@/lib/modo";
 import type { Database, Papel } from "@/lib/supabase/database.types";
 
 /**
@@ -9,6 +11,11 @@ import type { Database, Papel } from "@/lib/supabase/database.types";
  * É uma checagem otimista de navegação. A autorização de verdade está no RLS e nos layouts de cada área.
  */
 export async function proxy(request: NextRequest) {
+  if (MODO_DEMO) {
+    const sessao = lerSessaoDemo(request.cookies.get(COOKIE_SESSAO_DEMO)?.value);
+    return aplicarDecisao(request, NextResponse.next({ request }), sessao?.papel ?? null, Boolean(sessao));
+  }
+
   let response = NextResponse.next({ request });
   const env = envPublico();
 
@@ -36,17 +43,21 @@ export async function proxy(request: NextRequest) {
     papel = perfil?.role ?? null;
   }
 
+  return aplicarDecisao(request, response, papel, Boolean(userId));
+}
+
+function aplicarDecisao(request: NextRequest, response: NextResponse, papel: Papel | null, logado: boolean) {
   const decisao = decidirRota({
     pathname: request.nextUrl.pathname,
     search: request.nextUrl.search,
-    logado: Boolean(userId),
+    logado,
     papel,
   });
 
   if (decisao.tipo === "seguir") return response;
 
   const redirecionamento = NextResponse.redirect(new URL(decisao.para, request.url));
-  // mantém os cookies de sessão renovados acima
+  // mantém os cookies de sessão renovados
   for (const cookie of response.cookies.getAll()) redirecionamento.cookies.set(cookie);
   return redirecionamento;
 }

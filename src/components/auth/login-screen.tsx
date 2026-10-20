@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { MODO_DEMO } from "@/lib/modo";
+import type { Papel } from "@/lib/supabase/database.types";
+import { DemoLoginForm } from "./demo-login-form";
 import { LoginForm } from "./login-form";
 
 const MENSAGENS_DE_ERRO: Record<string, string> = {
@@ -12,12 +15,14 @@ type LoginScreenProps = {
   descricao: string;
   placeholder: string;
   outroLogin: { href: string; rotulo: string };
+  /** Perfil já marcado no login de demonstração. */
+  papelInicial: Papel;
   next?: string;
   erro?: string;
 };
 
-/** Tela de login por link mágico, compartilhada por M1 (monitor) e A1 (aluno). */
-export function LoginScreen({ area, descricao, placeholder, outroLogin, next, erro }: LoginScreenProps) {
+/** Tela de login compartilhada por M1 (monitor) e A1 (aluno): link mágico, ou login provisório no modo demonstração. */
+export function LoginScreen({ area, descricao, placeholder, outroLogin, papelInicial, next, erro }: LoginScreenProps) {
   const mensagemErro = erro ? MENSAGENS_DE_ERRO[erro] : undefined;
 
   return (
@@ -38,7 +43,11 @@ export function LoginScreen({ area, descricao, placeholder, outroLogin, next, er
             {mensagemErro}
           </p>
         )}
-        <LoginForm placeholder={placeholder} next={next} />
+        {MODO_DEMO ? (
+          <DemoLoginForm papelInicial={papelInicial} next={next} />
+        ) : (
+          <LoginForm placeholder={placeholder} next={next} />
+        )}
       </div>
 
       <Link
