@@ -1,16 +1,9 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
+import { AREA_DO_PAPEL, LOGIN_ALUNO } from "@/lib/auth/rotas";
+import { obterPerfil } from "@/lib/auth/sessao";
 
-/** Provisória: a partir da Fase 2, a raiz redireciona cada perfil para a sua área. */
-export default function HomePage() {
-  return (
-    <main className="mx-auto flex min-h-dvh max-w-mobile flex-col items-center justify-center gap-4 px-5 text-center">
-      <h1 className="text-display">Achados e Perdidos FIAP</h1>
-      <p className="text-body text-muted">Fundação do projeto pronta. As telas chegam nas próximas fases.</p>
-      {process.env.NODE_ENV === "development" && (
-        <Link href="/dev/componentes" className="text-label text-accent-text underline-offset-4 hover:underline">
-          Ver componentes base
-        </Link>
-      )}
-    </main>
-  );
+/** A raiz não tem tela: leva cada perfil para a sua área (o proxy normalmente já fez isso). */
+export default async function HomePage() {
+  const perfil = await obterPerfil();
+  redirect(perfil ? AREA_DO_PAPEL[perfil.role] : LOGIN_ALUNO);
 }
