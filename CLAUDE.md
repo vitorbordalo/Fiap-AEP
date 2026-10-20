@@ -9,17 +9,14 @@ O dono do projeto é o PM e desenvolvedor. Trabalhe em fases, explique decisões
 | Fase | Status |
 |---|---|
 | 1. Fundação (projeto, tokens, componentes base, schema, RLS, migrations, este arquivo) | concluída |
-| 2. Dados e auth (seed, link mágico, perfis, proxy, `/dev/entrar`, login M1/A1) | concluída; falta aplicar no Supabase real |
-| 3. Monitor (M1 a M4) | telas prontas no modo demonstração; falta ligar ao Supabase (foto no Storage) |
-| 4. Aluno (A1 a A6 + Meus pedidos) | telas prontas no modo demonstração; falta ligar ao Supabase |
-| 5. Equipe (E1 a E7) | telas prontas no modo demonstração; falta ligar ao Supabase |
-| 6. Gestor (G1 a G3) | telas prontas no modo demonstração; falta ligar ao Supabase |
-| 7. Acabamento (testes, acessibilidade, README, deploy na Vercel) | pendente |
+| 2. Dados e auth (seed, link mágico, perfis, proxy, `/dev/entrar`, login M1/A1) | concluída; falta criar o projeto Supabase real e testar o e-mail do link mágico |
+| 3 a 6. Telas de monitor, aluno, equipe e gestor | prontas nos dois modos (demonstração e Supabase), testadas por E2E contra Postgres + PostgREST reais |
+| 7. Acabamento | testes, acessibilidade (axe, zero violações) e README prontos; falta o deploy na Vercel (depende do Supabase real) |
 | 8. Opcional: sugestão de categoria por IA atrás de feature flag | pendente |
 
 Atualize esta tabela ao terminar cada fase.
 
-Próximo passo combinado: ligar o Supabase (implementar `src/lib/dados/` sobre o banco, com as mesmas funções do modo demonstração) e testar o link mágico de ponta a ponta.
+Próximo passo: criar o projeto Supabase real (docs/supabase.md), testar o link mágico com e-mail de verdade e publicar na Vercel. O repositório ainda não foi enviado ao GitHub (falta a autorização do `gh`).
 
 ## Modo demonstração
 
@@ -27,7 +24,8 @@ Liga sozinho quando `NEXT_PUBLIC_SUPABASE_URL` não está definido (sem `.env.lo
 
 - Login provisório em `/login` e `/monitor/login`: qualquer usuário e senha, com escolha do perfil. A senha nem é enviada ao servidor; o cookie `ap_sessao_demo` guarda só perfil e nome. Com o Supabase configurado, o login volta a ser o link mágico.
 - Dados: `src/lib/dados/demo.ts`, em memória, gerados por `scripts/seed/dados.mjs`. Cadastros, pedidos e retiradas funcionam e somem quando o servidor reinicia. Fotos novas ficam como data URL.
-- As telas só usam `dados()` de `src/lib/dados`. A versão Supabase deve expor as mesmas funções e repetir as mesmas regras (o RLS garante no banco o que o `demo.ts` simula).
+- Em produção, a demonstração só liga com `NEXT_PUBLIC_MODO_DEMO=1`; sem isso e sem Supabase, o proxy responde 503 com instruções.
+- As telas só usam `dados()` de `src/lib/dados`, que devolve `repositorioDemo` ou o repositório Supabase (`supabase.ts`). Os dois cumprem o contrato `Repositorio` (`tipos.ts`) e usam a mesma montagem (`montagem.ts`): regra nova entra na montagem, não nas telas.
 
 ## Comandos
 
@@ -39,7 +37,12 @@ npm run typecheck    # tsc --noEmit
 npm test             # Vitest (unitários + RLS no PGlite)
 npm run db:validar   # aplica as migrations num Postgres em memória
 npm run db:seed      # dados de exemplo no Supabase (--reset para recriar)
+npm run test:integracao     # repositório Supabase contra Postgres + PostgREST reais
+npm run test:e2e            # Playwright no modo demonstração (PW_CHANNEL=msedge no Windows sem Chromium)
+npm run test:e2e:supabase   # Playwright com o app em modo Supabase (sem Docker)
 ```
+
+Pré-requisitos e camadas de teste: `docs/testes.md`.
 
 Configuração do Supabase (migrations, Auth, template de e-mail, seed): `docs/supabase.md`.
 
@@ -94,7 +97,7 @@ design/                  DESIGN.md e export do Stitch (referência, não copiar)
 |---|---|
 | background / surface / surface-elevated / border | `bg-background`, `bg-surface`, `bg-surface-elevated`, `border-border` |
 | text-primary / text-secondary / text-disabled | `text-foreground`, `text-muted`, `text-disabled` |
-| accent / accent-pressed | `bg-accent`, `bg-accent-pressed`; texto em destaque sobre fundo escuro: `text-accent-text` (contraste AA) |
+| accent / accent-pressed | `bg-accent` (#ED145B) para o que não leva texto (barras, pontos, foco); **fundo com texto branco usa `bg-accent-fill`** (#E31258, passa AA); texto em destaque sobre fundo escuro: `text-accent-text` |
 | Status Recebido / Aguardando / Retirado | ponto `bg-recebido` `bg-aguardando` `bg-retirado`; texto `text-*-text` |
 | Display / Title / Body / Label / Caption | `text-display`, `text-title`, `text-body`, `text-label`, `text-caption` |
 
