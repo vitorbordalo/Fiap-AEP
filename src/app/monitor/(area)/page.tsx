@@ -1,7 +1,11 @@
-import { AreaProvisoria } from "@/components/layout/area-provisoria";
+import type { Metadata } from "next";
 import { exigirPapel } from "@/lib/auth/sessao";
+import { Camera } from "./camera";
 
-export default async function MonitorPage() {
+export const metadata: Metadata = { title: "Novo item" };
+
+/** M2 · Câmera */
+export default async function MonitorCameraPage() {
   const perfil = await exigirPapel("monitor");
-  return <AreaProvisoria perfil={perfil} area="Área do monitor" fase={3} />;
+  return <Camera usuario={perfil.nome || perfil.email} />;
 }
