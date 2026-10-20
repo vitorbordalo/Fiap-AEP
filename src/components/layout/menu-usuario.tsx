@@ -39,7 +39,6 @@ export function MenuUsuario({ nome, detalhe, variante = "completo" }: MenuUsuari
         onClick={() => setAberto((a) => !a)}
         aria-expanded={aberto}
         aria-haspopup="menu"
-        aria-label={variante === "compacto" ? `Menu de ${nome}` : undefined}
         className={cn(
           "flex items-center gap-2 rounded-full transition-colors hover:bg-surface-elevated",
           variante === "completo" ? "h-10 border border-border py-1 pr-4 pl-1" : "size-12 justify-center",
@@ -48,7 +47,10 @@ export function MenuUsuario({ nome, detalhe, variante = "completo" }: MenuUsuari
         <span className="grid size-8 place-items-center rounded-full bg-accent/15 text-caption font-semibold text-accent-text">
           {iniciais(nome)}
         </span>
-        {variante === "completo" && <span className="text-label">{nome}</span>}
+        {/* o nome acessível é o próprio texto do botão: iniciais + nome (visível no desktop, só para leitor de tela no celular) */}
+        <span className={variante === "completo" ? "text-label" : "sr-only"}>
+          {variante === "completo" ? nome : `Menu de ${nome}`}
+        </span>
       </button>
 
       {aberto && (

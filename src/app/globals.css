@@ -23,6 +23,13 @@
   /* Destaque FIAP */
   --color-accent: #ed145b;
   --color-accent-pressed: #c10f4a;
+  /*
+   * Fundo de destaque com texto branco por cima (botões, chips selecionados).
+   * Branco sobre #ED145B dá 4,32:1, abaixo do AA (4,5:1); este tom quase idêntico dá 4,65:1.
+   * O #ED145B continua em tudo que não leva texto (barras, pontos, bordas, foco).
+   * Para usar a cor exata em tudo, troque o valor abaixo por #ed145b.
+   */
+  --color-accent-fill: #e31258;
   /* Texto em destaque sobre fundo escuro: #ED145B puro fica abaixo de 4.5:1, este tom passa AA. */
   --color-accent-text: #ff5c8a;
 

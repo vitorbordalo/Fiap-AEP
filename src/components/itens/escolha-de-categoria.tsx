@@ -50,7 +50,7 @@ export function EscolhaDeCategoria({
               "relative inline-flex h-10 items-center gap-2 rounded-full px-4 text-label whitespace-nowrap transition-colors",
               "after:absolute after:inset-x-0 after:-inset-y-1 after:content-['']",
               marcado
-                ? "bg-accent font-semibold text-white"
+                ? "bg-accent-fill font-semibold text-white"
                 : "border border-border bg-surface text-muted hover:bg-surface-elevated hover:text-foreground",
             )}
           >

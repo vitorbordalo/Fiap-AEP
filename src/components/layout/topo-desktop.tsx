@@ -17,7 +17,7 @@ export function TopoDesktop({ inicio, locais, localAtual, usuario, children }: T
     <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-desktop items-center justify-between gap-4 px-8">
         <Link href={inicio} className="flex items-center gap-3 rounded-lg">
-          <span className="grid size-9 place-items-center rounded-lg bg-accent text-body font-bold text-white" aria-hidden>
+          <span className="grid size-9 place-items-center rounded-lg bg-accent-fill text-body font-bold text-white" aria-hidden>
             F
           </span>
           <span className="text-body font-semibold">Achados e Perdidos</span>

@@ -37,7 +37,7 @@ const texto = (v: string | string[] | undefined) => (typeof v === "string" && v 
 function chipClasses(ativo: boolean) {
   return cn(
     "inline-flex h-10 shrink-0 items-center gap-2 rounded-full px-4 text-label whitespace-nowrap transition-colors [&_svg]:size-4",
-    ativo ? "bg-accent font-semibold text-white" : "border border-border text-muted hover:bg-surface-elevated hover:text-foreground",
+    ativo ? "bg-accent-fill font-semibold text-white" : "border border-border text-muted hover:bg-surface-elevated hover:text-foreground",
   );
 }
 
@@ -145,7 +145,7 @@ export async function ListaDeItens({ status, localId, params }: { status: ItemSt
               ))}
             </nav>
           ) : (
-            <Link href={link({ pedido: soComPedido ? undefined : "1" })} className={chipClasses(soComPedido)} aria-pressed={soComPedido}>
+            <Link href={link({ pedido: soComPedido ? undefined : "1" })} className={chipClasses(soComPedido)} aria-current={soComPedido ? "true" : undefined}>
               <span className={cn("size-1.5 rounded-full", soComPedido ? "bg-white" : "bg-aguardando")} aria-hidden />
               Só com pedido
             </Link>

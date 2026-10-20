@@ -155,7 +155,7 @@ export function RegistrarRetirada({
                 className={cn(
                   "h-10 rounded-full px-4 text-label transition-colors",
                   origem === opcao.id
-                    ? "bg-accent font-semibold text-white"
+                    ? "bg-accent-fill font-semibold text-white"
                     : "border border-border text-muted hover:bg-surface-elevated hover:text-foreground",
                 )}
               >

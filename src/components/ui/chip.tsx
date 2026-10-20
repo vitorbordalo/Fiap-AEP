@@ -20,7 +20,7 @@ export function Chip({ selected = false, icon, className, children, ...props }: 
         // o pseudo-elemento estende a área de toque para 48px sem mudar o visual do chip
         "relative after:absolute after:inset-x-0 after:-inset-y-1 after:content-['']",
         selected
-          ? "bg-accent font-semibold text-white"
+          ? "bg-accent-fill font-semibold text-white"
           : "border border-border bg-surface text-muted hover:bg-surface-elevated hover:text-foreground",
         className,
       )}
