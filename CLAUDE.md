@@ -9,15 +9,25 @@ O dono do projeto é o PM e desenvolvedor. Trabalhe em fases, explique decisões
 | Fase | Status |
 |---|---|
 | 1. Fundação (projeto, tokens, componentes base, schema, RLS, migrations, este arquivo) | concluída |
-| 2. Dados e auth (seed, link mágico, perfis, proxy, `/dev/entrar`, login M1/A1) | concluída, aguardando revisão |
-| 3. Monitor (M1 a M4) | pendente |
-| 4. Aluno (A1 a A6 + Meus pedidos) | pendente |
-| 5. Equipe (E1 a E7) | pendente |
-| 6. Gestor (G1 a G3) | pendente |
+| 2. Dados e auth (seed, link mágico, perfis, proxy, `/dev/entrar`, login M1/A1) | concluída; falta aplicar no Supabase real |
+| 3. Monitor (M1 a M4) | telas prontas no modo demonstração; falta ligar ao Supabase (foto no Storage) |
+| 4. Aluno (A1 a A6 + Meus pedidos) | telas prontas no modo demonstração; falta ligar ao Supabase |
+| 5. Equipe (E1 a E7) | telas prontas no modo demonstração; falta ligar ao Supabase |
+| 6. Gestor (G1 a G3) | telas prontas no modo demonstração; falta ligar ao Supabase |
 | 7. Acabamento (testes, acessibilidade, README, deploy na Vercel) | pendente |
 | 8. Opcional: sugestão de categoria por IA atrás de feature flag | pendente |
 
 Atualize esta tabela ao terminar cada fase.
+
+Próximo passo combinado: ligar o Supabase (implementar `src/lib/dados/` sobre o banco, com as mesmas funções do modo demonstração) e testar o link mágico de ponta a ponta.
+
+## Modo demonstração
+
+Liga sozinho quando `NEXT_PUBLIC_SUPABASE_URL` não está definido (sem `.env.local`). Serve para navegar por todas as telas localmente.
+
+- Login provisório em `/login` e `/monitor/login`: qualquer usuário e senha, com escolha do perfil. A senha nem é enviada ao servidor; o cookie `ap_sessao_demo` guarda só perfil e nome. Com o Supabase configurado, o login volta a ser o link mágico.
+- Dados: `src/lib/dados/demo.ts`, em memória, gerados por `scripts/seed/dados.mjs`. Cadastros, pedidos e retiradas funcionam e somem quando o servidor reinicia. Fotos novas ficam como data URL.
+- As telas só usam `dados()` de `src/lib/dados`. A versão Supabase deve expor as mesmas funções e repetir as mesmas regras (o RLS garante no banco o que o `demo.ts` simula).
 
 ## Comandos
 
@@ -52,7 +62,11 @@ Mudanças de stack: proponha antes de fazer.
 ```
 src/app/                 rotas (App Router)
 src/components/ui/       componentes base do design system
-src/lib/dominio/         regras de negócio puras (status, conferência) + testes
+src/lib/dominio/         regras de negócio puras (status, conferência, período do dia, local sugerido) + testes
+src/lib/dados/           acesso a dados das telas: tipos.ts (formatos), demo.ts (memória), index.ts (dados())
+src/lib/acoes/           Server Actions compartilhadas (cadastro de item: M3 e E6)
+src/lib/formato.ts       datas no fuso de São Paulo, códigos, plural, iniciais
+src/components/{itens,equipe,gestor,layout,auth}/  componentes por área
 src/lib/auth/            regras de rota por perfil (rotas.ts), e-mail, sessão (exigirPapel)
 src/lib/supabase/        clientes (server, client, admin) e tipos do banco
 src/proxy.ts             renova a sessão e redireciona por perfil (Next 16: ex-middleware)
@@ -135,6 +149,8 @@ Pastas do Stitch: `m1_login_do_monitor`, `m2_novo_item_c_mera`, `m3_detalhes_do_
 - Login só por link mágico (`src/app/auth/actions.ts`). O cadastro público fica **desligado** no Supabase: o servidor confere o domínio e cria o usuário com a service role antes de enviar o link.
 - Três barreiras: `proxy.ts` (navegação), `exigirPapel()` no layout de cada área (servidor) e RLS (dados). Toda área nova chama `exigirPapel` no layout.
 - A área do monitor fica em `src/app/monitor/(area)/` para que `/monitor/login` fique fora do layout protegido.
+- E5 e E6 abrem como modal por rota interceptada (`src/app/equipe/@modal/(.)itens/...`) e têm versão de página inteira para link direto. O slot `@modal` precisa de `default.tsx` e `[...resto]` retornando `null`.
+- Server Actions conferem o papel com `exigirPapelNaAcao()` e validam a entrada com Zod.
 - Cliente admin (`src/lib/supabase/admin.ts`) só para criar usuário e `/dev/entrar`. Dados de negócio sempre pelo cliente com sessão (RLS).
 - Use `getClaims()` para identificar o usuário no servidor, nunca `getSession()`.
 
@@ -157,6 +173,8 @@ Detalhes e matriz de permissões em `docs/banco-de-dados.md`. Pontos que não po
 - Acessibilidade: contraste AA, label em todo input, teclado nas telas desktop.
 - Textos em português do Brasil, tom do DESIGN.md: direto, amigável, curto, "você".
 - Commits pequenos e descritivos ao final de cada etapa.
+- Datas sempre pelos helpers de `src/lib/formato.ts` (fuso de São Paulo), nunca `toLocaleString` solto.
+- Gráficos: uma série = uma cor (o destaque); mapa de calor sequencial de um matiz; texto nunca na cor da série. Números grandes usam `text-kpi`.
 
 ## Dados de exemplo
 
