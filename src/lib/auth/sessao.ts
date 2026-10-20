@@ -2,7 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { dados } from "@/lib/dados";
+import { perfilDeTeste } from "@/lib/dados/demo";
 import { MODO_DEMO } from "@/lib/modo";
 import { createClient } from "@/lib/supabase/server";
 import type { Papel, Tables } from "@/lib/supabase/database.types";
@@ -15,7 +15,7 @@ export type Perfil = Tables<"profiles">;
 export const obterPerfil = cache(async (): Promise<Perfil | null> => {
   if (MODO_DEMO) {
     const sessao = lerSessaoDemo((await cookies()).get(COOKIE_SESSAO_DEMO)?.value);
-    return sessao ? dados().perfilDeTeste(sessao.papel, sessao.nome) : null;
+    return sessao ? perfilDeTeste(sessao.papel, sessao.nome) : null;
   }
 
   const supabase = await createClient();

@@ -178,7 +178,8 @@ export type Configuracoes = {
 };
 
 export type NovoItem = {
-  fotoUrl: string;
+  /** Caminho devolvido por salvarFoto (Storage) ou data URL no modo demonstração. */
+  fotoPath: string;
   categoriaId: string;
   salaId: string;
   turmaId: string | null;
@@ -199,6 +200,40 @@ export type NovaRetirada = {
   pedidoId: string | null;
   rm: string;
   nome: string;
+};
+
+/**
+ * Contrato da camada de dados. O modo demonstração (memória) e o Supabase implementam
+ * exatamente estas funções, então as telas e as Server Actions não sabem qual está em uso.
+ * Os ids de quem age (alunoId, autorId, equipeId) servem ao modo demonstração; no Supabase,
+ * a sessão e o RLS é que decidem (os triggers preenchem a autoria).
+ */
+export type Repositorio = {
+  catalogo(): Promise<Catalogo>;
+
+  buscarItensPublicos(filtro: FiltroBuscaAluno): Promise<ItemPublico[]>;
+  obterItemPublico(id: string): Promise<ItemPublico | null>;
+  pedidoDoAluno(alunoId: string, itemId: string): Promise<string | null>;
+  criarPedido(alunoId: string, novo: NovoPedido): Promise<{ id: string }>;
+  listarMeusPedidos(alunoId: string): Promise<MeuPedido[]>;
+  obterMeuPedido(alunoId: string, pedidoId: string): Promise<MeuPedido | null>;
+
+  salvarFoto(autorId: string, foto: File): Promise<string>;
+  cadastrarItem(autorId: string, novo: NovoItem): Promise<{ id: string; codigo: string }>;
+  obterItemCadastrado(autorId: string, id: string): Promise<ItemEquipe | null>;
+
+  listarItensEquipe(filtro: FiltroItensEquipe): Promise<ItemEquipe[]>;
+  resumoEquipe(localId: string | null): Promise<ResumoEquipe>;
+  obterItemDetalhe(id: string): Promise<ItemDetalhe | null>;
+  registrarRetirada(equipeId: string, nova: NovaRetirada): Promise<{ id: string }>;
+  desfazerRetirada(equipeId: string, retiradaId: string): Promise<{ itemId: string }>;
+
+  dashboard(localId: string | null, periodo: PeriodoRelatorio): Promise<Dashboard>;
+  historico(filtro: FiltroHistorico): Promise<LinhaHistorico[]>;
+  configuracoes(): Promise<Configuracoes>;
+  atualizarDiasParaAguardando(dias: number): Promise<void>;
+  alterarPessoa(id: string, papel: Papel, localId: string | null): Promise<void>;
+  definirPapelPorEmail(email: string, papel: Papel, localId: string | null): Promise<void>;
 };
 
 /** Erro de regra de negócio, com mensagem pronta para mostrar ao usuário. */
