@@ -165,7 +165,10 @@ Detalhes e matriz de permissões em `docs/banco-de-dados.md`. Pontos que não po
 - Autoria e datas de criação são preenchidas por trigger a partir da sessão.
 - Migrations novas: novo arquivo em `supabase/migrations/` com timestamp; nunca edite uma migration já aplicada no Supabase.
 - Mudou o schema? Atualize `src/lib/supabase/database.types.ts` (ou regenere com a CLI) e o seed.
-- Fotos: `foto_path` que começa com `seed/` é uma foto de exemplo servida de `public/seed/`; as demais estão no bucket privado `itens` e são exibidas com URL assinada.
+- Fotos: `foto_path` que começa com `seed/` é uma foto de exemplo servida de `public/seed/`; as demais estão no bucket privado `itens`, na pasta de quem cadastrou (`<uuid do autor>/<uuid>.webp`, regra no banco), e são exibidas com URL assinada.
+- Perfil: papel, local, e-mail, RM e nome só mudam pela coordenação (trigger em `profiles`).
+- Ids que vêm da URL, de cookies ou de formulários passam por `ehUuid()` (`src/lib/utils.ts`) antes de ir ao banco.
+- `?next=` sempre por `caminhoSeguro()` (bloqueia redirecionamento aberto, inclusive com TAB e quebra de linha).
 
 ## Qualidade e UX
 

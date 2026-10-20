@@ -26,6 +26,7 @@ Antes, confira localmente: `npm run db:validar`.
 4. `20261020120300_storage.sql`
 5. `20261021090000_views_aluno.sql`
 6. `20261021100000_service_role_private.sql`
+7. `20261021110000_protecoes_perfil_foto.sql`
 
 **Opção B, Supabase CLI:**
 
