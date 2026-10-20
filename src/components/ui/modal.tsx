@@ -53,7 +53,7 @@ export function ModalContent({ title, description, size = "lg", className, child
 /** Rodapé fixo do modal: texto de apoio à esquerda, ações à direita. */
 export function ModalFooter({ hint, children }: { hint?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <footer className="-mx-8 -mb-6 mt-6 flex items-center justify-between gap-4 border-t border-border px-8 py-5">
+    <footer className="sticky -bottom-6 z-10 -mx-8 -mb-6 mt-6 flex items-center justify-between gap-4 border-t border-border bg-surface px-8 py-5">
       <p className="text-label font-normal text-muted">{hint}</p>
       <div className="flex gap-3">{children}</div>
     </footer>

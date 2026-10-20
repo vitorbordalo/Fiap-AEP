@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { RastreadorDeNavegacao } from "@/components/layout/link-voltar";
 import { Toaster } from "@/components/ui/toast";
 import "./globals.css";
 
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         {children}
         <Toaster />
+        <RastreadorDeNavegacao />
       </body>
     </html>
   );

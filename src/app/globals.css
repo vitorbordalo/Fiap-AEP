@@ -60,6 +60,10 @@
   --text-caption: 0.75rem;
   --text-caption--line-height: 1rem;
   --text-caption--font-weight: 400;
+  /* Números grandes dos cartões de resumo e KPIs */
+  --text-kpi: 2.5rem;
+  --text-kpi--line-height: 1;
+  --text-kpi--font-weight: 700;
 
   /* Larguras de layout */
   --container-mobile: 430px;
