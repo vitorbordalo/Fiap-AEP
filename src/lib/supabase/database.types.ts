@@ -270,6 +270,7 @@ export type Database = {
           foto_path: string | null;
           observacao: string | null;
           foto_oculta: boolean;
+          numero: number;
         };
         Relationships: [
           Rel<"itens_categoria_id_fkey", "categoria_id", "categorias">,
@@ -294,6 +295,9 @@ export type Database = {
           foto_path: string | null;
           foto_oculta: boolean;
           status: Database["public"]["Enums"]["pedido_status"];
+          numero: number;
+          turma_id: string | null;
+          observacao: string | null;
         };
         Relationships: [
           Rel<"itens_categoria_id_fkey", "categoria_id", "categorias">,

@@ -1,16 +1,22 @@
 import "server-only";
 import { MODO_DEMO } from "@/lib/modo";
-import * as demo from "./demo";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+import { repositorioDemo } from "./demo";
+import { criarRepositorioSupabase } from "./supabase";
+import type { Repositorio } from "./tipos";
+
+const repositorioSupabase = criarRepositorioSupabase({
+  cliente: createClient,
+  admin: process.env.SUPABASE_SERVICE_ROLE_KEY ? createAdminClient : undefined,
+});
 
 /**
- * Ponto único de acesso a dados para as telas. Hoje só existe a implementação em memória
- * (modo demonstração); a versão Supabase entra aqui com as mesmas funções, sem mudar as telas.
+ * Ponto único de acesso a dados para telas e Server Actions.
+ * Sem Supabase configurado, usa o modo demonstração (memória); com ele, o banco real (sob RLS).
  */
-export function dados() {
-  if (!MODO_DEMO) {
-    throw new Error("As telas ainda leem só os dados de demonstração. Remova o .env.local para usar o modo demonstração.");
-  }
-  return demo;
+export function dados(): Repositorio {
+  return MODO_DEMO ? repositorioDemo : repositorioSupabase;
 }
 
 export * from "./tipos";

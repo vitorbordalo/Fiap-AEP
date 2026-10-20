@@ -44,11 +44,11 @@ export async function cadastrarItem(formData: FormData): Promise<ResultadoCadast
   }
 
   const { foto, ...item } = entrada.data;
-  // Modo demonstração: a foto fica em memória como data URL. Com o Supabase, vai para o Storage.
-  const fotoUrl = `data:${foto.type};base64,${Buffer.from(await foto.arrayBuffer()).toString("base64")}`;
 
   try {
-    const { id, codigo } = await dados().cadastrarItem(perfil.id, { ...item, fotoUrl });
+    // Supabase: vai para o Storage (pasta de quem envia). Modo demonstração: fica em memória.
+    const fotoPath = await dados().salvarFoto(perfil.id, foto);
+    const { id, codigo } = await dados().cadastrarItem(perfil.id, { ...item, fotoPath });
     revalidatePath("/equipe", "layout");
     return { ok: true, id, codigo };
   } catch (erro) {
