@@ -14,3 +14,10 @@ const twMerge = extendTailwindMerge({
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Ids vindos da URL ou de cookies: checar antes de ir ao banco evita erro 500 com id malformado. */
+export function ehUuid(valor: unknown): valor is string {
+  return typeof valor === "string" && UUID.test(valor);
+}

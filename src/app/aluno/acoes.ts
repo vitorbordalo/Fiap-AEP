@@ -4,11 +4,12 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { exigirPapelNaAcao } from "@/lib/auth/sessao";
 import { dados, ErroDeNegocio } from "@/lib/dados";
+import { ehUuid } from "@/lib/utils";
 
 const esquemaPedido = z.object({
-  itemId: z.string().min(1),
-  salaId: z.string({ error: "Escolha a sala." }).min(1, { error: "Escolha a sala." }),
-  turmaId: z.string({ error: "Escolha sua turma." }).min(1, { error: "Escolha sua turma." }),
+  itemId: z.string().refine(ehUuid, { error: "Item inválido." }),
+  salaId: z.string({ error: "Escolha a sala." }).refine(ehUuid, { error: "Escolha a sala." }),
+  turmaId: z.string({ error: "Escolha sua turma." }).refine(ehUuid, { error: "Escolha sua turma." }),
   horario: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, { error: "Informe o horário aproximado." }),
   confirmo: z.literal("on", { error: "Confirme que vai apresentar sua carteirinha." }),
 });

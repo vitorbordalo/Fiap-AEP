@@ -4,10 +4,11 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { exigirPapelNaAcao } from "@/lib/auth/sessao";
 import { dados, ErroDeNegocio } from "@/lib/dados";
+import { ehUuid } from "@/lib/utils";
 
 const esquemaRetirada = z.object({
-  itemId: z.string().min(1),
-  pedidoId: z.string().min(1).nullable(),
+  itemId: z.string().refine(ehUuid, { error: "Item inválido." }),
+  pedidoId: z.string().refine(ehUuid, { error: "Pedido inválido." }).nullable(),
   rm: z
     .string()
     .trim()
@@ -44,6 +45,7 @@ export async function registrarRetirada(
 /** E7 (e o "Desfazer" do toast) · Marca a retirada como desfeita. Nunca apaga. */
 export async function desfazerRetirada(retiradaId: string): Promise<Resultado> {
   const perfil = await exigirPapelNaAcao("equipe", "gestor");
+  if (!ehUuid(retiradaId)) return { ok: false, erro: "Retirada não encontrada." };
   try {
     await dados().desfazerRetirada(perfil.id, retiradaId);
     revalidatePath("/", "layout");

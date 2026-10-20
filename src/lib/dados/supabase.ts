@@ -17,6 +17,7 @@ import {
   type Retrato,
   type RetiradaLinha,
 } from "./montagem";
+import { ehUuid } from "@/lib/utils";
 import { ErroDeNegocio, type Catalogo, type ItemPublico, type MeuPedido, type Repositorio } from "./tipos";
 
 /**
@@ -122,8 +123,8 @@ async function resolverFotos(c: Cliente, fotos: { caminho: string; icone: string
   const urls = new Map<string, string>();
   const doStorage: string[] = [];
   for (const { caminho } of fotos) {
-    if (caminho.startsWith("seed/")) urls.set(caminho, `/${caminho}`);
-    else if (caminho.startsWith("data:") || caminho.startsWith("/")) urls.set(caminho, caminho);
+    // só fotos de exemplo ou do Storage (o banco também restringe o formato do foto_path)
+    if (/^seed\/[a-z0-9-]+\.svg$/.test(caminho)) urls.set(caminho, `/${caminho}`);
     else doStorage.push(caminho);
   }
   const unicos = [...new Set(doStorage)];
@@ -148,7 +149,7 @@ async function carregarRetrato(c: Cliente, filtro: FiltroRetrato = {}): Promise<
   const catalogo = await carregarCatalogo(c);
 
   const linhasItens = filtro.ids
-    ? await emLotes("Carregar itens", filtro.ids, (lote) => c.from("itens").select(COLUNAS_ITEM).in("id", lote))
+    ? await emLotes("Carregar itens", filtro.ids.filter(ehUuid), (lote) => c.from("itens").select(COLUNAS_ITEM).in("id", lote))
     : await todas("Carregar itens", (de, ate) => {
         let q = c.from("itens").select(COLUNAS_ITEM).order("numero").range(de, ate);
         if (filtro.localId) q = q.eq("local_id", filtro.localId);
@@ -333,6 +334,7 @@ export function criarRepositorioSupabase({ cliente, admin }: Opcoes): Repositori
     },
 
     async obterItemPublico(id) {
+      if (!ehUuid(id)) return null;
       const c = await cliente();
       const { data, error } = await c.from("itens_busca").select(COLUNAS_BUSCA).eq("id", id).maybeSingle();
       if (error) falhar("Carregar item", error);
@@ -342,6 +344,7 @@ export function criarRepositorioSupabase({ cliente, admin }: Opcoes): Repositori
     },
 
     async pedidoDoAluno(alunoId, itemId) {
+      if (!ehUuid(itemId)) return null;
       const c = await cliente();
       const { data, error } = await c.from("pedidos").select("id").eq("item_id", itemId).eq("aluno_id", alunoId).maybeSingle();
       if (error) falhar("Carregar pedido", error);
@@ -378,6 +381,7 @@ export function criarRepositorioSupabase({ cliente, admin }: Opcoes): Repositori
     },
 
     async obterMeuPedido(_alunoId, pedidoId) {
+      if (!ehUuid(pedidoId)) return null;
       const [pedido] = await meusPedidos(await cliente(), pedidoId);
       return pedido ?? null;
     },
