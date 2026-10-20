@@ -36,3 +36,20 @@ export const STATUS_LABEL: Record<ItemStatus, string> = {
   aguardando: "Aguardando retirada",
   retirado: "Retirado",
 };
+
+/**
+ * Aviso da lista de Recebidos: o item vira Aguardando hoje ou amanhã (pelo calendário de São Paulo)?
+ * null quando ainda falta mais tempo (ou se já foi retirado).
+ */
+export function quandoViraAguardando(
+  encontradoEm: Date,
+  diasParaAguardando: number,
+  agora = new Date(),
+): "hoje" | "amanha" | null {
+  const vira = new Date(encontradoEm.getTime() + diasParaAguardando * MS_POR_DIA);
+  if (vira.getTime() <= agora.getTime()) return null;
+  const dia = (d: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(d);
+  if (dia(vira) === dia(agora)) return "hoje";
+  if (dia(vira) === dia(new Date(agora.getTime() + MS_POR_DIA))) return "amanha";
+  return null;
+}
