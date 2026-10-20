@@ -31,7 +31,7 @@ const base64url = (dados) => Buffer.from(dados).toString("base64url");
 /** JWT HS256 igual ao do Supabase Auth (role "authenticated" e o id do usuário em "sub"). */
 function assinarJwt(segredo, claims) {
   const cabecalho = base64url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-  const corpo = base64url(JSON.stringify({ aud: "authenticated", exp: Math.floor(Date.now() / 1000) + 3600, ...claims }));
+  const corpo = base64url(JSON.stringify({ aud: "authenticated", exp: Math.floor(Date.now() / 1000) + 24 * 3600, ...claims }));
   const assinatura = createHmac("sha256", segredo).update(`${cabecalho}.${corpo}`).digest("base64url");
   return `${cabecalho}.${corpo}.${assinatura}`;
 }
@@ -49,7 +49,7 @@ function rodar(binario, args, env) {
 }
 
 /** Pede uma porta livre ao sistema (evita colisão com execuções anteriores). */
-function portaLivre() {
+export function portaLivre() {
   return new Promise((resolve, reject) => {
     const servidor = createServer();
     servidor.on("error", reject);
@@ -129,6 +129,14 @@ ${final.slice(-800)}`);
   return {
     url,
     sql,
+    /** String de conexão do Postgres (superusuário), para quem precisar de um pool próprio. */
+    uri: `postgres://postgres@127.0.0.1:${portaPg}/postgres`,
+    segredo,
+    /** Pasta temporária desta instância (o gateway guarda as fotos aqui). */
+    pastaArquivos: pasta,
+    /** Chaves no formato do Supabase: anon e service_role (JWT assinados com o mesmo segredo). */
+    chaveAnon: assinarJwt(segredo, { role: "anon" }),
+    chaveServico: assinarJwt(segredo, { role: "service_role" }),
     /** JWT de um usuário logado, para usar como chave do supabase-js. */
     jwtPara: (userId) => assinarJwt(segredo, { sub: userId, role: "authenticated" }),
     /** Pede ao PostgREST para reler o schema (depois de criar tabelas ou views nos testes). */

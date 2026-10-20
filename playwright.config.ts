@@ -22,7 +22,8 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], channel: process.env.PW_CHANNEL || undefined } }],
-  webServer: {
+  // no modo Supabase quem sobe o app é scripts/e2e-supabase.mjs
+  webServer: process.env.E2E_MODO === "supabase" ? undefined : {
     command: `npm run build && npx next start -p ${PORTA}`,
     url: `http://localhost:${PORTA}/login`,
     timeout: 240_000,
