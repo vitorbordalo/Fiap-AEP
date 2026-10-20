@@ -14,6 +14,8 @@ const ids = {
 };
 
 let db: PGlite;
+const FOTO_FONE = `${ids.monitor}/11111111-1111-4111-8111-111111111111.webp`;
+const FOTO_DOC = `${ids.monitor}/22222222-2222-4222-8222-222222222222.webp`;
 let base: { local: string; sala: string; turma: string; fone: string; documento: string };
 let itemFone: string;
 let itemDocumento: string;
@@ -89,12 +91,12 @@ beforeAll(async () => {
   );
   base = { local: local.id, sala: sala.id, turma: turma.id, fone: fone.id, documento: documento.id };
 
-  itemFone = (await inserirItem(db, base.fone, { foto: `${ids.monitor}/fone.webp`, obs: "Fone preto" })).id;
-  itemDocumento = (await inserirItem(db, base.documento, { foto: `${ids.monitor}/doc.webp`, obs: "RG de Fulano" })).id;
+  itemFone = (await inserirItem(db, base.fone, { foto: FOTO_FONE, obs: "Fone preto" })).id;
+  itemDocumento = (await inserirItem(db, base.documento, { foto: FOTO_DOC, obs: "RG de Fulano" })).id;
   await db.query(
     `insert into storage.objects (bucket_id, name, owner, owner_id) values
      ('itens', $1, $3::uuid, $3), ('itens', $2, $3::uuid, $3)`,
-    [`${ids.monitor}/fone.webp`, `${ids.monitor}/doc.webp`, ids.monitor],
+    [FOTO_FONE, FOTO_DOC, ids.monitor],
   );
 });
 
@@ -112,6 +114,13 @@ describe("perfis", () => {
     await comoUsuario(db, ids.aluno, async (tx) => {
       const erro = await esperaErro(tx, "update profiles set role = 'gestor' where id = $1", [ids.aluno]);
       expect(erro).toMatch(/coordenação/);
+    });
+  });
+
+  it("aluno não troca o próprio RM nem o nome (evita se passar por um colega)", async () => {
+    await comoUsuario(db, ids.aluno, async (tx) => {
+      expect(await esperaErro(tx, "update profiles set rm = '559999' where id = $1", [ids.aluno])).toMatch(/coordenação/);
+      expect(await esperaErro(tx, "update profiles set nome = 'Outro Aluno' where id = $1", [ids.aluno])).toMatch(/coordenação/);
     });
   });
 
@@ -137,11 +146,27 @@ describe("cadastro de itens", () => {
       const item = await um<{ codigo: string; cadastrado_por: string }>(
         tx,
         `insert into itens (foto_path, categoria_id, sala_id, local_id, cadastrado_por)
-         values ('x.webp', $1, $2, $3, $4) returning codigo, cadastrado_por`,
-        [base.fone, base.sala, base.local, ids.monitor],
+         values ($5, $1, $2, $3, $4) returning codigo, cadastrado_por`,
+        [base.fone, base.sala, base.local, ids.monitor, `${ids.monitor}/${crypto.randomUUID()}.webp`],
       );
       expect(item.codigo).toBe("AP-0003");
       expect(item.cadastrado_por).toBe(ids.monitor);
+    });
+  });
+
+  it("foto só da própria pasta, sem endereço externo e sem reaproveitar a foto de outro item", async () => {
+    await comoUsuario(db, ids.monitor, async (tx) => {
+      const inserir = (foto: string) =>
+        esperaErro(tx, "insert into itens (foto_path, categoria_id, sala_id, local_id) values ($1, $2, $3, $4)", [
+          foto,
+          base.fone,
+          base.sala,
+          base.local,
+        ]);
+      expect(await inserir("//externo.com/x.png")).toMatch(/itens_foto_path_formato/);
+      expect(await inserir(`${ids.equipe}/${crypto.randomUUID()}.webp`)).toMatch(/itens_foto_path_formato/);
+      // reaproveitar a foto do Documento num item de Fone a tornaria pública para alunos
+      expect(await inserir(FOTO_DOC)).toMatch(/itens_foto_path_unica|duplicate key/);
     });
   });
 
@@ -149,7 +174,7 @@ describe("cadastro de itens", () => {
     await comoUsuario(db, ids.aluno, async (tx) => {
       const erro = await esperaErro(
         tx,
-        "insert into itens (foto_path, categoria_id, sala_id, local_id, cadastrado_por) values ('x', $1, $2, $3, $4)",
+        "insert into itens (foto_path, categoria_id, sala_id, local_id, cadastrado_por) values ('seed/fone.svg', $1, $2, $3, $4)",
         [base.fone, base.sala, base.local, ids.aluno],
       );
       expect(erro).toMatch(/row-level security/);
@@ -160,7 +185,7 @@ describe("cadastro de itens", () => {
     await comoUsuario(db, ids.monitor, async (tx) => {
       const erro = await esperaErro(
         tx,
-        "insert into itens (foto_path, categoria_id, sala_id, local_id, observacao) values ('x', $1, $2, $3, $4)",
+        "insert into itens (foto_path, categoria_id, sala_id, local_id, observacao) values ('seed/fone.svg', $1, $2, $3, $4)",
         [base.fone, base.sala, base.local, "a".repeat(141)],
       );
       expect(erro).toMatch(/check constraint/);
@@ -185,12 +210,12 @@ describe("busca do aluno (LGPD)", () => {
     const doc = itens.find((i) => i.id === itemDocumento);
     const fone = itens.find((i) => i.id === itemFone);
     expect(doc).toMatchObject({ foto_path: null, observacao: null, foto_oculta: true });
-    expect(fone).toMatchObject({ foto_path: `${ids.monitor}/fone.webp`, observacao: "Fone preto", foto_oculta: false });
+    expect(fone).toMatchObject({ foto_path: FOTO_FONE, observacao: "Fone preto", foto_oculta: false });
   });
 
   it("aluno baixa a foto do fone, mas não a do documento", async () => {
     const fotos = await comoUsuario(db, ids.aluno, (tx) => linhas<{ name: string }>(tx, "select name from storage.objects"));
-    expect(fotos.map((f) => f.name)).toEqual([`${ids.monitor}/fone.webp`]);
+    expect(fotos.map((f) => f.name)).toEqual([FOTO_FONE]);
   });
 
   it("equipe vê todas as fotos; monitor só envia na própria pasta", async () => {
@@ -304,8 +329,10 @@ describe("pedidos e retiradas", () => {
 describe("status pelo tempo no local", () => {
   it("passa de Recebido para Aguardando depois de N dias, e N vem das configurações", async () => {
     await comoUsuario(db, ids.gestor, async (tx) => {
-      const seisDias = await inserirItem(tx, base.fone, { dias: 6 });
-      const oitoDias = await inserirItem(tx, base.fone, { dias: 8 });
+      // a foto fica na pasta de quem cadastra (o gestor, aqui)
+      const fotoDoGestor = () => `${ids.gestor}/${crypto.randomUUID()}.webp`;
+      const seisDias = await inserirItem(tx, base.fone, { dias: 6, foto: fotoDoGestor() });
+      const oitoDias = await inserirItem(tx, base.fone, { dias: 8, foto: fotoDoGestor() });
       const status = (id: string) => um<{ status: string }>(tx, "select status from itens_com_status where id = $1", [id]);
 
       expect(await status(seisDias.id)).toEqual({ status: "recebido" });
