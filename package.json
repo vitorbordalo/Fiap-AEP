@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:validar": "node scripts/db/validar-migrations.mjs"
+    "db:validar": "node scripts/db/validar-migrations.mjs",
+    "db:seed": "node --env-file=.env.local scripts/seed/index.mjs",
+    "db:placeholders": "node scripts/seed/gerar-placeholders.mjs"
   },
   "engines": {
     "node": ">=20.9"
@@ -28,6 +30,7 @@
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "recharts": "^3.10.1",
+    "server-only": "^0.0.1",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.6.7"
