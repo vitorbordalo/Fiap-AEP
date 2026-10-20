@@ -1,0 +1,34 @@
+# dependências
+node_modules/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+
+# build e cobertura
+build/
+coverage/
+*.tsbuildinfo
+
+# testes e2e
+test-results/
+playwright-report/
+playwright/.cache/
+
+# ambiente (nunca commitar segredos)
+.env
+.env.local
+.env.*.local
+
+# supabase cli
+supabase/.branches/
+supabase/.temp/
+
+# sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# configurações locais do Claude Code
+.claude/settings.local.json

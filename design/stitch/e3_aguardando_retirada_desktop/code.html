@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E3 — Aguardando Retirada (Desktop)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            background: '#0D0D0D',
+            surface: '#1A1A1A',
+            'surface-elevated': '#242424',
+            border: '#2E2E2E',
+            accent: '#ED145B',
+            'accent-pressed': '#C10F4A',
+            'text-primary': '#FFFFFF',
+            'text-secondary': '#A3A3A3',
+            'text-disabled': '#5C5C5C',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0D0D0D;
+      color: #FFFFFF;
+      -webkit-font-smoothing: antialiased;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-[#0D0D0D] text-[#FFFFFF] min-h-screen flex flex-col font-sans selection:bg-[#ED145B]/30 selection:text-white">
+
+  <!-- Top bar identical to E2 -->
+  <header class="w-full bg-[#1A1A1A] border-b border-[#2E2E2E] h-16 px-8 flex items-center justify-between sticky top-0 z-40">
+    <!-- Left: FIAP logo + Title -->
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-lg bg-[#ED145B] flex items-center justify-center font-bold text-white text-base shadow-sm">
+        F
+      </div>
+      <span class="text-base font-semibold text-[#FFFFFF] tracking-tight">Achados e Perdidos</span>
+    </div>
+
+    <!-- Right: Location Switcher & User Profile -->
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2 bg-[#242424] border border-[#2E2E2E] rounded-full px-3.5 py-1.5 text-xs text-[#A3A3A3] font-medium cursor-pointer hover:border-[#3E3E3E] transition-colors">
+        <svg class="w-3.5 h-3.5 text-[#A3A3A3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        <span>Sala de TI</span>
+        <svg class="w-3 h-3 text-[#A3A3A3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </div>
+
+      <div class="flex items-center space-x-2 bg-[#242424] border border-[#2E2E2E] rounded-full px-3 py-1 text-xs font-medium cursor-pointer hover:border-[#3E3E3E] transition-colors">
+        <span class="text-[#A3A3A3] font-semibold">AS</span>
+        <span class="text-white">Ana Souza</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Centered (max width 1080px) -->
+  <main class="w-full max-w-[1080px] mx-auto px-6 py-8 flex-1">
+    
+    <!-- 1. Back link -->
+    <div class="mb-5">
+      <a href="#" class="inline-flex items-center text-sm font-medium text-[#A3A3A3] hover:text-white transition-colors group">
+        <svg class="w-4 h-4 mr-1.5 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Itens
+      </a>
+    </div>
+
+    <!-- 2. Header row: Title with amber dot, subtitle, primary button -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <div class="flex items-center space-x-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B] inline-block shadow-[0_0_8px_rgba(245,158,11,0.4)]"></span>
+          <h1 class="text-2xl font-bold text-white tracking-tight">Aguardando retirada</h1>
+        </div>
+        <p class="text-sm text-[#A3A3A3] mt-1">Há mais de 7 dias no local · 4 itens</p>
+      </div>
+
+      <button class="inline-flex items-center justify-center px-4 py-2 bg-[#ED145B] hover:bg-[#C10F4A] active:bg-[#A00C3C] text-white text-sm font-semibold rounded-xl shadow-sm transition-colors">
+        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Novo item
+      </button>
+    </div>
+
+    <!-- 3. Toolbar in ONE single row -->
+    <div class="w-full bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl p-2.5 flex items-center justify-between gap-4 mb-2">
+      <!-- Search Input (about 40% width) -->
+      <div class="relative w-[38%] min-w-[280px]">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#737373]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+        <input 
+          type="text" 
+          placeholder="Buscar por código, item ou aluno"
+          class="w-full bg-[#0D0D0D] border border-[#2E2E2E] focus:border-[#ED145B] focus:outline-none rounded-lg pl-10 pr-4 py-2 text-xs text-white placeholder-[#737373] transition-colors"
+        />
+      </div>
+
+      <!-- Filter chips (horizontal scroll without wrapping) -->
+      <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar flex-1 py-0.5">
+        <!-- Todos (Selected) -->
+        <button class="flex items-center px-3 py-1.5 rounded-full bg-[#ED145B] text-white text-xs font-medium whitespace-nowrap transition-colors">
+          Todos
+        </button>
+        <!-- Fone -->
+        <button class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#242424] hover:bg-[#2A2A2A] text-[#A3A3A3] hover:text-white border border-[#2E2E2E] text-xs font-medium whitespace-nowrap transition-colors">
+          <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"></path>
+          </svg>
+          <span>Fone</span>
+        </button>
+        <!-- Celular -->
+        <button class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#242424] hover:bg-[#2A2A2A] text-[#A3A3A3] hover:text-white border border-[#2E2E2E] text-xs font-medium whitespace-nowrap transition-colors">
+          <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+          <span>Celular</span>
+        </button>
+        <!-- Carregador -->
+        <button class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#242424] hover:bg-[#2A2A2A] text-[#A3A3A3] hover:text-white border border-[#2E2E2E] text-xs font-medium whitespace-nowrap transition-colors">
+          <svg class="w-3.5 h-3.5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <span>Carregador</span>
+        </button>
+        <!-- Mochila -->
+        <button class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#242424] hover:bg-[#2A2A2A] text-[#A3A3A3] hover:text-white border border-[#2E2E2E] text-xs font-medium whitespace-nowrap transition-colors">
+          <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+          </svg>
+          <span>Mochila</span>
+        </button>
+        <!-- Documento -->
+        <button class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#242424] hover:bg-[#2A2A2A] text-[#A3A3A3] hover:text-white border border-[#2E2E2E] text-xs font-medium whitespace-nowrap transition-colors">
+          <svg class="w-3.5 h-3.5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
+          </svg>
+          <span>Documento</span>
+        </button>
+        <!-- Outros -->
+        <button class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#242424] hover:bg-[#2A2A2A] text-[#A3A3A3] hover:text-white border border-[#2E2E2E] text-xs font-medium whitespace-nowrap transition-colors">
+          <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+          </svg>
+          <span>Outros</span>
+        </button>
+      </div>
+
+      <!-- Toggle "Só com pedido" -->
+      <div class="flex items-center pl-2 border-l border-[#2E2E2E]">
+        <button class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-[#242424] hover:bg-[#2A2A2A] text-[#A3A3A3] hover:text-white border border-[#2E2E2E] text-xs font-medium whitespace-nowrap transition-colors">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+          <span>Só com pedido</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. Helper text under the toolbar -->
+    <p class="text-xs text-[#737373] mb-6 pl-1 font-normal">
+      Itens com pedido aparecem primeiro. Depois, do mais antigo para o mais novo.
+    </p>
+
+    <!-- 5. Grid of item cards (3 columns, 24px gap, 4 cards total -> 3 on row 1, 1 on row 2 aligned left) -->
+    <div class="grid grid-cols-3 gap-6">
+
+      <!-- Card 1: Casaco #AP-8460 (Pedido de Pedro Lima, 9 dias) -->
+      <div class="bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl overflow-hidden flex flex-col hover:border-[#3E3E3E] transition-all group">
+        <!-- Photo Container 16:10 -->
+        <div class="relative w-full aspect-[16/10] bg-[#141414] overflow-hidden cursor-pointer">
+          <img 
+            src="https://lh3.googleusercontent.com/aida/AEtjO1UEgvpRfsmSpsMtOgSOeLRrGA5Wl6540-LMoXLsqxtGDZwxludqjT3OmvUD0FKhEdSpkRAA3VZMf06BlRqRJdF-SDI-gh4bPC-xjgMY7MZowddsvYwIzSVoz88VAuqaYGAeRym3PDfJTMT4c-WKZjcTQYyQVtokRFQnVuPP6lK42KLoRoI91JR_CTRpPhoRKQGKPm9TVtYZhhzR33cnLIm4L5sEFDZvKInyHLoYV5DaGbjs5ePI1YxLhhQ" 
+            alt="Casaco" 
+            class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+          />
+          <!-- Category icon tile (28px top-left) -->
+          <div class="absolute top-3 left-3 w-7 h-7 rounded-lg bg-[#0D0D0D]/75 backdrop-blur-md border border-white/10 flex items-center justify-center text-orange-400">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="p-4 flex flex-col flex-1 justify-between">
+          <div class="space-y-1.5 mb-4">
+            <!-- Line 1: Title + Code -->
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-semibold text-white tracking-tight cursor-pointer hover:text-[#ED145B] transition-colors">Casaco</h2>
+              <span class="text-xs text-[#737373] font-mono">#AP-8460</span>
+            </div>
+
+            <!-- Line 2: Request badge with amber dot -->
+            <div class="flex items-center space-x-1.5 text-xs text-[#F59E0B] font-medium pt-0.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+              <span>Pedido de Pedro Lima</span>
+            </div>
+
+            <!-- Line 3: Sala · Turma -->
+            <p class="text-xs text-[#A3A3A3]">Sala 115 · 3ESPB</p>
+
+            <!-- Line 4: Time line (9 dias no local in AMBER with clock icon) -->
+            <div class="flex items-center space-x-1.5 text-xs text-[#F59E0B] font-medium pt-0.5">
+              <svg class="w-3.5 h-3.5 text-[#F59E0B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>9 dias no local</span>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <button class="w-full py-2.5 px-3 rounded-lg border border-[#2E2E2E] bg-transparent hover:bg-[#242424] hover:border-[#3E3E3E] text-xs font-semibold text-white transition-colors text-center">
+            Registrar retirada
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 2: Garrafa térmica #AP-8311 (32 dias no local in RED with warning icon) -->
+      <div class="bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl overflow-hidden flex flex-col hover:border-[#3E3E3E] transition-all group">
+        <!-- Photo Container 16:10 -->
+        <div class="relative w-full aspect-[16/10] bg-[#141414] overflow-hidden cursor-pointer">
+          <img 
+            src="https://lh3.googleusercontent.com/aida/AEtjO1WA0bwCRozHuRTN6OC58ZfiMoW5Mtjzu3xbHeapum_tiTQfSlfF3uaMi1f218dE-p0p9AJvnpl9dGghOvVqRmYkOBczzKj_z1JlxftuJB1wXGIoTzGtLiMz7ySh4bTBL5Xtw7BGCGvYGre3BXd-2Dvd3279k8wMooX6ieOK8bPxbFvm65MXg1fAIY4Z2E3Tgf8kutLU94bV4m8KMoPn5SX1yzF4fvsP_0c2vQNTow0KlFu4g4xkzPj_Eg" 
+            alt="Garrafa térmica" 
+            class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+          />
+          <!-- Category icon tile (28px top-left) -->
+          <div class="absolute top-3 left-3 w-7 h-7 rounded-lg bg-[#0D0D0D]/75 backdrop-blur-md border border-white/10 flex items-center justify-center text-cyan-400">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="p-4 flex flex-col flex-1 justify-between">
+          <div class="space-y-1.5 mb-4">
+            <!-- Line 1: Title + Code -->
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-semibold text-white tracking-tight cursor-pointer hover:text-[#ED145B] transition-colors">Garrafa térmica</h2>
+              <span class="text-xs text-[#737373] font-mono">#AP-8311</span>
+            </div>
+
+            <!-- Empty request placeholder to keep vertical alignment uniform if needed or direct Sala -->
+            <p class="text-xs text-[#A3A3A3] pt-0.5">Sala 302 · 1TDSA</p>
+
+            <!-- Time line (>30 days: RED with warning icon) -->
+            <div class="flex items-center space-x-1.5 text-xs text-[#EF4444] font-medium pt-0.5">
+              <svg class="w-3.5 h-3.5 text-[#EF4444]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+              <span>32 dias no local</span>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <button class="w-full py-2.5 px-3 rounded-lg border border-[#2E2E2E] bg-transparent hover:bg-[#242424] hover:border-[#3E3E3E] text-xs font-semibold text-white transition-colors text-center">
+            Registrar retirada
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 3: Guarda-chuva #AP-8402 (12 dias in AMBER) -->
+      <div class="bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl overflow-hidden flex flex-col hover:border-[#3E3E3E] transition-all group">
+        <!-- Photo Container 16:10 -->
+        <div class="relative w-full aspect-[16/10] bg-[#141414] overflow-hidden cursor-pointer">
+          <img 
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkoOEWvLNLn_LdP1Rc6fDK_PpeO2c2RntJFv2iSNqpsNSalrrElQpKtaD8y-Ow2WaNcCcFM7Muj2scOF3DiIhL_TFAneJmBvuaN1goSYXYQMqOGV0gqfgWwLS4JVXtYRNaFviq8p4Qz-Hu6DVZo6rnVygPDYYOs1CWhH-GLbPat3Ef_WAsYoFuxaubkCcxbq77TgHDDH5_WW8IvxqCFAlu1DUZmXXW1zxNjKhRuirFcTKoxfbRF-f3" 
+            alt="Guarda-chuva" 
+            class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+          />
+          <!-- Category icon tile (28px top-left) -->
+          <div class="absolute top-3 left-3 w-7 h-7 rounded-lg bg-[#0D0D0D]/75 backdrop-blur-md border border-white/10 flex items-center justify-center text-zinc-400">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="p-4 flex flex-col flex-1 justify-between">
+          <div class="space-y-1.5 mb-4">
+            <!-- Line 1: Title + Code -->
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-semibold text-white tracking-tight cursor-pointer hover:text-[#ED145B] transition-colors">Guarda-chuva</h2>
+              <span class="text-xs text-[#737373] font-mono">#AP-8402</span>
+            </div>
+
+            <!-- Line 2: Sala · Turma -->
+            <p class="text-xs text-[#A3A3A3] pt-0.5">Sala 210 · 1ESPA</p>
+
+            <!-- Line 3: Time line (12 dias in AMBER with clock icon) -->
+            <div class="flex items-center space-x-1.5 text-xs text-[#F59E0B] font-medium pt-0.5">
+              <svg class="w-3.5 h-3.5 text-[#F59E0B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>12 dias no local</span>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <button class="w-full py-2.5 px-3 rounded-lg border border-[#2E2E2E] bg-transparent hover:bg-[#242424] hover:border-[#3E3E3E] text-xs font-semibold text-white transition-colors text-center">
+            Registrar retirada
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 4: Caderno #AP-8398 (9 dias in AMBER) - Row 2, Col 1 aligned left -->
+      <div class="bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl overflow-hidden flex flex-col hover:border-[#3E3E3E] transition-all group">
+        <!-- Photo Container 16:10 -->
+        <div class="relative w-full aspect-[16/10] bg-[#141414] overflow-hidden cursor-pointer">
+          <img 
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzJWvsvP0I4JpiAbXNqMPaoNVb7N4NXHOIuxMPc5uXgIziQUgKWNaAbMlgyzzXqLpY2MbsBJVnuaMYLYthW9j4In10wLA5-UHA5XMD260VYl7_t_FR2FoBYinF7Lxqr8ertMjFaBmAkmgkkcZzJIB_puCFQrDnWY3iyEdSP_LZgNDax2AHDrTZ1vgSKx15GPgJzSZOWb-MITxTEKqX968hw1BW7nB0nuznYsBZz91NR_xwuMOeVnDd" 
+            alt="Caderno" 
+            class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+          />
+          <!-- Category icon tile (28px top-left) -->
+          <div class="absolute top-3 left-3 w-7 h-7 rounded-lg bg-[#0D0D0D]/75 backdrop-blur-md border border-white/10 flex items-center justify-center text-blue-400">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="p-4 flex flex-col flex-1 justify-between">
+          <div class="space-y-1.5 mb-4">
+            <!-- Line 1: Title + Code -->
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-semibold text-white tracking-tight cursor-pointer hover:text-[#ED145B] transition-colors">Caderno</h2>
+              <span class="text-xs text-[#737373] font-mono">#AP-8398</span>
+            </div>
+
+            <!-- Line 2: Sala · Turma -->
+            <p class="text-xs text-[#A3A3A3] pt-0.5">Sala 304 · 2ESPH</p>
+
+            <!-- Line 3: Time line (9 dias in AMBER with clock icon) -->
+            <div class="flex items-center space-x-1.5 text-xs text-[#F59E0B] font-medium pt-0.5">
+              <svg class="w-3.5 h-3.5 text-[#F59E0B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>9 dias no local</span>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <button class="w-full py-2.5 px-3 rounded-lg border border-[#2E2E2E] bg-transparent hover:bg-[#242424] hover:border-[#3E3E3E] text-xs font-semibold text-white transition-colors text-center">
+            Registrar retirada
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+</body>
+</html>

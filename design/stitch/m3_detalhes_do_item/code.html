@@ -1,0 +1,223 @@
+<!DOCTYPE html><html class="dark" lang="pt-BR" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_blank" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100vw;min-height:100vh;margin:0;padding:0;}body{overscroll-behavior:none;background-color:#131313;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "background": "#131313", "surface-container-lowest": "#0e0e0e", "primary-container": "#ff4f76", "tertiary-container": "#30a467", "tertiary": "#6ddc99", "inverse-primary": "#bd0045", "secondary": "#c8c6c6", "surface-tint": "#ffb2bb", "surface-container-low": "#1c1b1b", "status-returned": "#22C55E", "on-surface-variant": "#e5bcc0", "on-tertiary": "#00391e", "on-surface": "#e5e2e1", "on-tertiary-fixed": "#00210f", "on-primary-fixed": "#400012", "surface-dim": "#131313", "border": "#2E2E2E", "tertiary-fixed-dim": "#6ddc99", "status-archived": "#737373", "status-requested": "#F59E0B", "secondary-container": "#474747", "outline": "#ac888b", "text-primary": "#FFFFFF", "outline-variant": "#5c3f42", "on-error": "#690005", "accent-pressed": "#C10F4A", "on-primary-container": "#5a001d", "surface-variant": "#353534", "surface-container-high": "#2a2a2a", "primary-fixed": "#ffd9dd", "primary-fixed-dim": "#ffb2bb", "on-primary-fixed-variant": "#910033", "on-tertiary-fixed-variant": "#00522e", "status-stored": "#3B82F6", "primary": "#ffb2bb", "on-background": "#e5e2e1", "on-tertiary-container": "#003119", "inverse-on-surface": "#313030", "surface-elevated": "#242424", "on-error-container": "#ffdad6", "on-primary": "#670022", "error-container": "#93000a", "secondary-fixed-dim": "#c8c6c6", "surface-bright": "#3a3939", "on-secondary": "#303030", "secondary-fixed": "#e4e2e1", "on-secondary-fixed-variant": "#474747", "on-secondary-container": "#b6b5b4", "surface-container-highest": "#353534", "text-disabled": "#5C5C5C", "error": "#ffb4ab", "surface-container": "#201f1f", "text-secondary": "#A3A3A3", "inverse-surface": "#e5e2e1", "on-secondary-fixed": "#1b1c1c", "surface": "#1A1A1A", "tertiary-fixed": "#8af9b4" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "margin-desktop": "2rem", "gutter-desktop": "1.5rem", "space-lg": "1rem", "space-md": "0.75rem", "space-2xl": "2rem", "margin": "1.25rem", "space-xs": "0.25rem", "gutter": "1rem", "space-xl": "1.5rem", "space-3xl": "3rem" }, "fontFamily": { "headline-lg": ["Inter"], "label-sm": ["Inter"], "label-md": ["Inter"], "body-md": ["Inter"], "headline-sm": ["Inter"] }, "fontSize": { "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }], "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-background text-on-surface antialiased"><main class="relative w-full min-h-screen bg-background"><div class="flex flex-col w-full text-on-surface pb-32 select-none">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between px-margin py-space-md">
+<button aria-label="Voltar" class="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-text-primary active:bg-surface-elevated transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="text-label-sm font-label-sm text-text-secondary tracking-wide uppercase">Fluxo do Monitor</span>
+<h1 class="text-headline-sm font-headline-sm text-text-primary">Detalhes do item</h1>
+</div>
+<div class="px-space-md py-1 rounded-full bg-surface-elevated flex items-center">
+<span class="text-label-sm font-label-sm text-text-secondary">Passo <strong class="text-text-primary font-medium">2 / 3</strong></span>
+</div>
+</header>
+<!-- Step Progress Indicator -->
+<div class="px-margin mb-space-lg">
+<div class="w-full h-1 bg-surface-container rounded-full overflow-hidden flex">
+<div class="w-2/3 h-full bg-primary-container rounded-full"></div>
+</div>
+</div>
+<form class="flex flex-col gap-space-xl px-margin" id="item-details-form">
+<!-- Step 1 Photo Preview & Fast Retake Card -->
+<div class="bg-surface rounded-xl p-space-md flex items-center gap-space-lg">
+<div class="relative w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-surface-container-high flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="Close-up photograph of a sleek silver laptop left forgotten on a minimalist dark graphite university study desk at night. Moody soft directional neon pink and amber campus lights reflect faintly on the metallic chassis and keyboard. High contrast sharp macro details, academic dark mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGXjtSxZ3NoKHhH5UnngE1Ha6sM30JhJByj_0muxQFYgkHvazIIE7R4yns27P7uBQlv6o2RbWKYeC67FJ89SAE9MqmEZwKIRPk5NXD3WVBzw8aep01LRTm7xDe5-nr4FJPdaj2-T1yqutXcyouAIUOLn1vlzLuSKgne7ns6e5cCztiersxEWLgGFiZzFiNOqjQEf-Icf3oG2fWs-FAQggizXI89jL-aOfFWKRb4K1nWqOAdQt2tUlo">
+<div class="absolute bottom-1 right-1 bg-surface-container-lowest/80 px-1.5 py-0.5 rounded-full flex items-center gap-1 backdrop-blur-xs">
+<span class="material-symbols-outlined text-tertiary text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-[10px] text-text-primary font-medium">Capturada</span>
+</div>
+</div>
+<div class="flex flex-col justify-between py-1 flex-1 min-w-0"><div class=""><label for="item-name-input" class="block text-[11px] font-label-sm text-text-secondary mb-1">Nome do item:</label><div class="relative flex items-center bg-surface-container rounded-lg px-2.5 py-1.5 focus-within:ring-1 focus-within:ring-primary-container transition-all"><input id="item-name-input" type="text" value="Notebook Asus" placeholder="Ex.: Notebook Asus" class="w-full bg-transparent text-label-md font-medium text-text-primary outline-none placeholder:text-text-disabled truncate"><span class="material-symbols-outlined text-text-disabled text-[16px] shrink-0 ml-1">edit</span></div></div>
+<button class="mt-2 inline-flex items-center gap-1.5 self-start text-label-md font-label-md text-primary hover:text-text-primary active:opacity-80 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">photo_camera</span>
+<span class="">Refazer foto</span>
+</button></div>
+</div>
+<!-- Quick Select Category Chips -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<label class="text-label-md font-label-md text-text-secondary">Categoria do objeto</label>
+<span class="text-label-sm font-label-sm text-text-disabled">Toque para selecionar</span>
+</div>
+<div class="flex flex-wrap gap-2" id="category-chips">
+<button class="category-chip px-3.5 py-2 rounded-full text-label-md font-label-md bg-surface text-text-secondary active:scale-95 transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">smartphone</span>
+<span class="">Celular</span>
+</button>
+<button class="category-chip px-3.5 py-2 rounded-full text-label-md font-label-md bg-surface text-text-secondary active:scale-95 transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">headphones</span>
+<span class="">Fones</span>
+</button>
+<button class="category-chip px-3.5 py-2 rounded-full text-label-md font-label-md bg-primary-container text-text-primary font-medium active:scale-95 transition-all flex items-center gap-1.5 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">laptop_mac</span>
+<span class="">Notebook</span>
+</button>
+<button class="category-chip px-3.5 py-2 rounded-full text-label-md font-label-md bg-surface text-text-secondary active:scale-95 transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">local_drink</span>
+<span class="">Garrafa</span>
+</button>
+<button class="category-chip px-3.5 py-2 rounded-full text-label-md font-label-md bg-surface text-text-secondary active:scale-95 transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">apparel</span>
+<span class="">Casaco</span>
+</button>
+<button class="category-chip px-3.5 py-2 rounded-full text-label-md font-label-md bg-surface text-text-secondary active:scale-95 transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">backpack</span>
+<span class="">Mochila</span>
+</button>
+<button class="category-chip px-3.5 py-2 rounded-full text-label-md font-label-md bg-surface text-text-secondary active:scale-95 transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">power</span>
+<span class="">Carregador</span>
+</button>
+<button class="category-chip px-3.5 py-2 rounded-full text-label-md font-label-md bg-surface text-text-secondary active:scale-95 transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">badge</span>
+<span class="">Documento</span>
+</button>
+<button class="category-chip px-3.5 py-2 rounded-full text-label-md font-label-md bg-surface text-text-secondary active:scale-95 transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">category</span>
+<span class="">Outros</span>
+</button>
+</div>
+</section>
+<!-- Location & Class Selectors Grid -->
+<div class="grid grid-cols-2 gap-3">
+<div class="flex flex-col gap-space-xs">
+<label class="text-label-md font-label-md text-text-secondary">Sala</label>
+<button class="w-full h-12 bg-surface hover:bg-surface-elevated rounded-xl px-space-md flex items-center justify-between text-left active:scale-[0.98] transition-all" type="button">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">meeting_room</span>
+<span class="text-label-md font-label-md text-text-primary truncate">Sala 304</span>
+</div>
+<span class="material-symbols-outlined text-text-secondary text-[20px]">expand_more</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="text-label-md font-label-md text-text-secondary">Turma</label>
+<button class="w-full h-12 bg-surface hover:bg-surface-elevated rounded-xl px-space-md flex items-center justify-between text-left active:scale-[0.98] transition-all" type="button">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">groups</span>
+<span class="text-label-md font-label-md text-text-primary truncate">2ESPH</span>
+</div>
+<span class="material-symbols-outlined text-text-secondary text-[20px]">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Date & Time Row (Auto-filled) -->
+<div class="flex flex-col gap-space-xs">
+<label class="text-label-md font-label-md text-text-secondary">Data e horário do registro</label>
+<div class="w-full h-12 bg-surface rounded-xl px-space-md flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-tertiary text-[18px]">schedule</span>
+<span class="text-label-md font-label-md text-text-primary">19/10/2026 · 22:10</span>
+
+</div>
+<button aria-label="Editar data e hora" class="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary hover:text-text-primary active:bg-surface-elevated" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+</div>
+<!-- Observation Field -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<label class="text-label-md font-label-md text-text-secondary" for="observation">Observação (opcional)</label>
+<span class="text-label-sm font-label-sm text-text-disabled">0/140</span>
+</div>
+<div class="bg-surface rounded-xl p-space-md focus-within:ring-1 focus-within:ring-primary-container transition-all">
+<textarea class="w-full bg-transparent text-label-md font-label-md text-text-primary placeholder:text-text-disabled outline-none resize-none leading-relaxed" id="observation" placeholder="Ex.: adesivo da FIAP na tampa, capa preta almofadada..." rows="3"></textarea>
+</div>
+</div>
+<!-- Storage Destination Option Cards -->
+<section class="flex flex-col gap-space-sm">
+<label class="text-label-md font-label-md text-text-secondary">Onde vai ficar guardado?</label>
+<div class="grid grid-cols-2 gap-3" id="storage-options">
+<!-- Selected Card: Achados e Perdidos -->
+<button class="storage-card relative flex flex-col items-start p-space-md rounded-xl bg-surface-elevated text-left active:scale-[0.98] transition-all" data-selected="true" type="button"><div class="w-full flex items-center justify-between mb-space-sm">
+<div class="w-8 h-8 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+</div>
+<span class="storage-check material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="text-label-md font-headline-sm text-text-primary font-semibold">Achados e Perdidos</span></button>
+<!-- Unselected Card: Sala de TI -->
+<button class="storage-card relative flex flex-col items-start p-space-md rounded-xl bg-surface text-left active:scale-[0.98] transition-all opacity-80" data-selected="false" type="button"><div class="w-full flex items-center justify-between mb-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">computer</span>
+</div>
+<span class="storage-check material-symbols-outlined text-text-disabled text-[20px]">radio_button_unchecked</span>
+</div>
+<span class="text-label-md font-headline-sm text-text-primary font-semibold">Sala de TI</span></button>
+</div>
+</section>
+<!-- Subtle Safety / Integrity Note -->
+
+</form>
+<!-- Sticky Bottom CTA Area -->
+<aside class="fixed bottom-0 left-0 right-0 max-w-[390px] mx-auto p-margin bg-background/85 backdrop-blur-md z-40 pb-safe">
+<button class="w-full h-[52px] bg-primary-container active:bg-accent-pressed text-text-primary rounded-xl font-headline-sm text-[15px] font-semibold flex items-center justify-center gap-2 shadow-lg active:scale-[0.99] transition-all" type="button" style="background-color: rgb(237, 20, 91);">
+<span class="">Cadastrar item</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</aside>
+</div>
+<script>
+  (function() {
+    // Quick Category Chip Toggle
+    const categoryChips = document.querySelectorAll('.category-chip');
+    categoryChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        categoryChips.forEach(c => {
+          c.classList.remove('bg-primary-container', 'text-text-primary', 'font-medium', 'shadow-sm');
+          c.classList.add('bg-surface', 'text-text-secondary');
+        });
+        chip.classList.remove('bg-surface', 'text-text-secondary');
+        chip.classList.add('bg-primary-container', 'text-text-primary', 'font-medium', 'shadow-sm');
+      });
+    });
+
+    // Storage Destination Selector Toggle
+    const storageCards = document.querySelectorAll('.storage-card');
+    storageCards.forEach(card => {
+      card.addEventListener('click', () => {
+        storageCards.forEach(c => {
+          c.dataset.selected = "false";
+          c.classList.remove('bg-surface-elevated', 'opacity-100');
+          c.classList.add('bg-surface', 'opacity-80');
+          
+          const iconWrapper = c.querySelector('.w-8');
+          iconWrapper.classList.remove('bg-primary-container/20', 'text-primary');
+          iconWrapper.classList.add('bg-surface-container', 'text-text-secondary');
+
+          const check = c.querySelector('.storage-check');
+          check.classList.remove('text-primary');
+          check.classList.add('text-text-disabled');
+          check.textContent = 'radio_button_unchecked';
+          check.style.fontVariationSettings = "'FILL' 0";
+        });
+
+        card.dataset.selected = "true";
+        card.classList.remove('bg-surface', 'opacity-80');
+        card.classList.add('bg-surface-elevated', 'opacity-100');
+
+        const activeIconWrapper = card.querySelector('.w-8');
+        activeIconWrapper.classList.remove('bg-surface-container', 'text-text-secondary');
+        activeIconWrapper.classList.add('bg-primary-container/20', 'text-primary');
+
+        const activeCheck = card.querySelector('.storage-check');
+        activeCheck.classList.remove('text-text-disabled');
+        activeCheck.classList.add('text-primary');
+        activeCheck.textContent = 'check_circle';
+        activeCheck.style.fontVariationSettings = "'FILL' 1";
+      });
+    });
+  })();
+</script></main>
+
+</body></html>
