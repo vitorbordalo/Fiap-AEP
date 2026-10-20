@@ -13,6 +13,21 @@ Aplicação web que substitui o processo de achados e perdidos da FIAP.
 
 Privacidade (LGPD) aplicada no banco: alunos nunca veem dados de outros alunos, e itens da categoria Documento nunca mostram a foto para alunos.
 
+## Telas
+
+| Aluno (celular) | | |
+|---|---|---|
+| ![Busca](docs/telas/aluno-busca.png) | ![Resultados](docs/telas/aluno-resultados.png) | ![Meus pedidos](docs/telas/aluno-meus-pedidos.png) |
+
+| Equipe e coordenação (desktop) |
+|---|
+| ![Início da equipe](docs/telas/equipe-inicio.png) |
+| ![Recebidos](docs/telas/equipe-recebidos.png) |
+| ![Registrar retirada com conferência](docs/telas/equipe-registrar-retirada.png) |
+| ![Dashboard da coordenação](docs/telas/gestor-dashboard.png) |
+
+As fotos dos itens nos dados de exemplo são ilustrações por categoria (`public/seed/`).
+
 ## Rodar localmente em 1 minuto
 
 ```bash
