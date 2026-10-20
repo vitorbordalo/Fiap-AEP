@@ -3,10 +3,13 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   resolve: {
-    alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@scripts": fileURLToPath(new URL("./scripts", import.meta.url)),
+    },
   },
   test: {
-    include: ["src/**/*.test.ts", "supabase/tests/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "supabase/tests/*.test.ts"],
     environment: "node",
   },
 });
