@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { decidirRota } from "@/lib/auth/rotas";
 import { COOKIE_SESSAO_DEMO, lerSessaoDemo } from "@/lib/auth/sessao-demo";
 import { envPublico } from "@/lib/env";
-import { MODO_DEMO } from "@/lib/modo";
+import { CONFIGURACAO_AUSENTE, MODO_DEMO } from "@/lib/modo";
 import type { Database, Papel } from "@/lib/supabase/database.types";
 
 /**
@@ -11,6 +11,15 @@ import type { Database, Papel } from "@/lib/supabase/database.types";
  * É uma checagem otimista de navegação. A autorização de verdade está no RLS e nos layouts de cada área.
  */
 export async function proxy(request: NextRequest) {
+  if (CONFIGURACAO_AUSENTE) {
+    return new NextResponse(
+      "Achados e Perdidos: o Supabase não está configurado. Defina NEXT_PUBLIC_SUPABASE_URL, " +
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY e SUPABASE_SERVICE_ROLE_KEY (veja docs/supabase.md), " +
+        "ou NEXT_PUBLIC_MODO_DEMO=1 para publicar a demonstração com dados fictícios.",
+      { status: 503, headers: { "content-type": "text/plain; charset=utf-8" } },
+    );
+  }
+
   if (MODO_DEMO) {
     const sessao = lerSessaoDemo(request.cookies.get(COOKIE_SESSAO_DEMO)?.value);
     return aplicarDecisao(request, NextResponse.next({ request }), sessao?.papel ?? null, Boolean(sessao));

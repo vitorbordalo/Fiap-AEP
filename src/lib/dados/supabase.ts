@@ -72,7 +72,22 @@ const hora = (valor: string) => valor.slice(0, 5);
 // Catálogo e fotos
 // ---------------------------------------------------------------------------
 
-async function carregarCatalogo(c: Cliente): Promise<Catalogo> {
+// O cliente é único por requisição (cache do React em index.ts), então memorizar por cliente
+// evita repetir as 5 consultas do catálogo entre layout, página e ações da mesma requisição.
+const catalogosPorCliente = new WeakMap<Cliente, Promise<Catalogo>>();
+
+function carregarCatalogo(c: Cliente): Promise<Catalogo> {
+  let catalogo = catalogosPorCliente.get(c);
+  if (!catalogo) {
+    catalogo = buscarCatalogo(c);
+    catalogosPorCliente.set(c, catalogo);
+    // se falhar, a próxima chamada tenta de novo
+    catalogo.catch(() => catalogosPorCliente.delete(c));
+  }
+  return catalogo;
+}
+
+async function buscarCatalogo(c: Cliente): Promise<Catalogo> {
   const [categorias, salas, turmas, locais, config] = await Promise.all([
     c.from("categorias").select("id, nome, icone, cor, foto_sensivel, ordem").order("ordem"),
     c.from("salas").select("id, nome").order("nome"),
@@ -490,6 +505,7 @@ export function criarRepositorioSupabase({ cliente, admin }: Opcoes): Repositori
       const { data, error } = await c.from("configuracoes").update({ dias_para_aguardando: dias }).eq("id", true).select("id");
       if (error) falhar("Salvar configurações", error);
       if (!data?.length) throw new ErroDeNegocio("Só a coordenação pode alterar as configurações.");
+      catalogosPorCliente.delete(c);
     },
 
     async alterarPessoa(id, papel, localId) {

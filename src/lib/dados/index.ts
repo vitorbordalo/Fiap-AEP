@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { MODO_DEMO } from "@/lib/modo";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -7,7 +8,8 @@ import { criarRepositorioSupabase } from "./supabase";
 import type { Repositorio } from "./tipos";
 
 const repositorioSupabase = criarRepositorioSupabase({
-  cliente: createClient,
+  // um cliente por requisição: a sessão é a mesma, e o catálogo fica memorizado nele
+  cliente: cache(createClient),
   admin: process.env.SUPABASE_SERVICE_ROLE_KEY ? createAdminClient : undefined,
 });
 

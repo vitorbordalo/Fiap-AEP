@@ -29,9 +29,10 @@ export default defineConfig({
     timeout: 240_000,
     reuseExistingServer: !process.env.CI,
     env: {
-      // força o modo demonstração mesmo se houver .env.local
+      // força o modo demonstração mesmo se houver .env.local (em produção ele precisa ser pedido)
       NEXT_PUBLIC_SUPABASE_URL: "",
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "",
+      NEXT_PUBLIC_MODO_DEMO: "1",
     },
   },
 });
