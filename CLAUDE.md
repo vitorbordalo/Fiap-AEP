@@ -8,8 +8,8 @@ O dono do projeto é o PM e desenvolvedor. Trabalhe em fases, explique decisões
 
 | Fase | Status |
 |---|---|
-| 1. Fundação (projeto, tokens, componentes base, schema, RLS, migrations, este arquivo) | concluída, aguardando revisão |
-| 2. Dados e auth (aplicar migrations no Supabase, seed, link mágico, perfis, proxy, `/dev/entrar`) | pendente |
+| 1. Fundação (projeto, tokens, componentes base, schema, RLS, migrations, este arquivo) | concluída |
+| 2. Dados e auth (seed, link mágico, perfis, proxy, `/dev/entrar`, login M1/A1) | concluída, aguardando revisão |
 | 3. Monitor (M1 a M4) | pendente |
 | 4. Aluno (A1 a A6 + Meus pedidos) | pendente |
 | 5. Equipe (E1 a E7) | pendente |
@@ -28,7 +28,10 @@ npm run lint         # ESLint
 npm run typecheck    # tsc --noEmit
 npm test             # Vitest (unitários + RLS no PGlite)
 npm run db:validar   # aplica as migrations num Postgres em memória
+npm run db:seed      # dados de exemplo no Supabase (--reset para recriar)
 ```
+
+Configuração do Supabase (migrations, Auth, template de e-mail, seed): `docs/supabase.md`.
 
 Rode `lint`, `typecheck` e `test` antes de cada commit. Não há Docker nesta máquina: `supabase start` não funciona; use o PGlite (`scripts/db/pglite.mjs`) para validar SQL e um projeto Supabase remoto para o resto.
 
@@ -50,10 +53,15 @@ Mudanças de stack: proponha antes de fazer.
 src/app/                 rotas (App Router)
 src/components/ui/       componentes base do design system
 src/lib/dominio/         regras de negócio puras (status, conferência) + testes
+src/lib/auth/            regras de rota por perfil (rotas.ts), e-mail, sessão (exigirPapel)
+src/lib/supabase/        clientes (server, client, admin) e tipos do banco
+src/proxy.ts             renova a sessão e redireciona por perfil (Next 16: ex-middleware)
 src/lib/utils.ts         cn()
 supabase/migrations/     SQL versionado (schema, views, rls, storage)
 supabase/tests/          testes de RLS no PGlite
 scripts/db/              harness PGlite e stub do Supabase
+scripts/seed/            gerador de dados fictícios, usuários de teste, runner do seed
+public/seed/             fotos de exemplo (SVG por categoria)
 docs/banco-de-dados.md   schema, views, matriz de permissões
 design/                  DESIGN.md e export do Stitch (referência, não copiar)
 ```
@@ -122,6 +130,14 @@ Pastas do Stitch: `m1_login_do_monitor`, `m2_novo_item_c_mera`, `m3_detalhes_do_
 
 **Perfis:** todo usuário novo entra como aluno. O gestor define monitor, equipe e gestor (G3). Cada pessoa da equipe tem um local padrão; o seletor no topo troca a visão (sem alterar o perfil).
 
+## Auth e acesso
+
+- Login só por link mágico (`src/app/auth/actions.ts`). O cadastro público fica **desligado** no Supabase: o servidor confere o domínio e cria o usuário com a service role antes de enviar o link.
+- Três barreiras: `proxy.ts` (navegação), `exigirPapel()` no layout de cada área (servidor) e RLS (dados). Toda área nova chama `exigirPapel` no layout.
+- A área do monitor fica em `src/app/monitor/(area)/` para que `/monitor/login` fique fora do layout protegido.
+- Cliente admin (`src/lib/supabase/admin.ts`) só para criar usuário e `/dev/entrar`. Dados de negócio sempre pelo cliente com sessão (RLS).
+- Use `getClaims()` para identificar o usuário no servidor, nunca `getSession()`.
+
 ## Banco
 
 Detalhes e matriz de permissões em `docs/banco-de-dados.md`. Pontos que não podem ser quebrados:
@@ -129,6 +145,8 @@ Detalhes e matriz de permissões em `docs/banco-de-dados.md`. Pontos que não po
 - Alunos leem itens só pela view `itens_busca` e pedidos pela `meus_pedidos`.
 - Autoria e datas de criação são preenchidas por trigger a partir da sessão.
 - Migrations novas: novo arquivo em `supabase/migrations/` com timestamp; nunca edite uma migration já aplicada no Supabase.
+- Mudou o schema? Atualize `src/lib/supabase/database.types.ts` (ou regenere com a CLI) e o seed.
+- Fotos: `foto_path` que começa com `seed/` é uma foto de exemplo servida de `public/seed/`; as demais estão no bucket privado `itens` e são exibidas com URL assinada.
 
 ## Qualidade e UX
 
@@ -142,7 +160,7 @@ Detalhes e matriz de permissões em `docs/banco-de-dados.md`. Pontos que não po
 
 ## Dados de exemplo
 
-Seed (Fase 2): 2 locais, ~15 salas, ~10 turmas, categorias (Celular, Fone, Notebook, Carregador, Garrafa, Casaco, Mochila, Documento, Guarda-chuva, Outros), ~30 itens entre Recebidos, Aguardando e Retirados, pedidos e retiradas coerentes, um mês de dados para o dashboard. **Só dados fictícios.** Fotos: placeholders SVG por categoria em `public/seed/`. 4 usuários de teste (um por perfil) e `/dev/entrar`, **só em desenvolvimento**.
+Seed (`scripts/seed/dados.mjs`, determinístico e relativo à data de hoje; validado em `supabase/tests/seed.test.ts`): 2 locais, ~15 salas, ~10 turmas, categorias (Celular, Fone, Notebook, Carregador, Garrafa, Casaco, Mochila, Documento, Guarda-chuva, Outros), ~30 itens entre Recebidos, Aguardando e Retirados, pedidos e retiradas coerentes, um mês de dados para o dashboard. **Só dados fictícios.** Fotos: placeholders SVG por categoria em `public/seed/`. 4 usuários de teste (um por perfil) e `/dev/entrar`, **só em desenvolvimento**.
 
 ## O que não fazer
 
