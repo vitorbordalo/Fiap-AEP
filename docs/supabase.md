@@ -18,7 +18,14 @@ Passo a passo para ligar o app a um projeto Supabase (feito uma vez por ambiente
 
 Antes, confira localmente: `npm run db:validar`.
 
-**Opção A, SQL Editor (mais simples):** no dashboard, abra **SQL Editor** e rode o conteúdo de cada arquivo de `supabase/migrations/`, **em ordem** (o nome começa com a data).
+**Opção A, SQL Editor (mais simples):** no dashboard, abra **SQL Editor** e rode o conteúdo de cada arquivo de `supabase/migrations/`, **em ordem** (o nome começa com a data):
+
+1. `20261020120000_schema.sql`
+2. `20261020120100_views.sql`
+3. `20261020120200_rls.sql`
+4. `20261020120300_storage.sql`
+5. `20261021090000_views_aluno.sql`
+6. `20261021100000_service_role_private.sql`
 
 **Opção B, Supabase CLI:**
 
@@ -69,8 +76,14 @@ Para entrar como cada perfil sem e-mail, rode `npm run dev` e abra [localhost:30
 
 ## 5. Dar papéis a pessoas reais
 
-Todo mundo entra como **aluno**. Até a tela G3 existir (Fase 6), promova alguém pelo **SQL Editor**:
+Todo mundo entra como **aluno**. A **primeira** pessoa da coordenação precisa ser promovida pelo **SQL Editor**, depois de entrar uma vez no app:
 
 ```sql
 update public.profiles set role = 'gestor' where email = 'pessoa@fiap.com.br';
 ```
+
+A partir daí, a coordenação dá os papéis pela tela **Configurações** (G3): "Editar" numa pessoa da lista ou "Adicionar pessoa" pelo e-mail institucional (a conta é criada se a pessoa ainda não entrou).
+
+## 6. Publicar na Vercel
+
+Passo a passo no [README](../README.md#deploy-na-vercel). Lembre de colocar a URL do deploy em **Site URL** e `https://<seu-app>.vercel.app/auth/confirmar` em **Redirect URLs**.
