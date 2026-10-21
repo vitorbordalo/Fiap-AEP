@@ -1,4 +1,6 @@
 import { TopoDesktop } from "@/components/layout/topo-desktop";
+import { TrocaDePerfil } from "@/components/layout/troca-de-perfil";
+import { MODO_DEMO } from "@/lib/modo";
 import { localDaVisao } from "@/lib/auth/local-visao";
 import { exigirPapel } from "@/lib/auth/sessao";
 import { dados } from "@/lib/dados";
@@ -20,6 +22,7 @@ export default async function EquipeLayout({ children, modal }: LayoutProps<"/eq
       />
       {children}
       {modal}
+      {MODO_DEMO && <TrocaDePerfil papelAtual="equipe" compacto />}
     </div>
   );
 }

@@ -2,21 +2,21 @@
   {
     "id": "a0000000-0000-4000-8000-000000000001",
     "email": "rm550001@example.com",
-    "nome": "Aluno Teste",
+    "nome": "Mariana Costa",
     "role": "aluno",
     "descricao": "Busca itens, faz pedidos e acompanha em Meus pedidos."
   },
   {
     "id": "a0000000-0000-4000-8000-000000000002",
     "email": "monitor@example.com",
-    "nome": "Monitor Teste",
+    "nome": "João Pereira",
     "role": "monitor",
     "descricao": "Cadastra itens encontrados pelo celular."
   },
   {
     "id": "a0000000-0000-4000-8000-000000000003",
     "email": "equipe@example.com",
-    "nome": "Equipe Teste",
+    "nome": "Ana Souza",
     "role": "equipe",
     "local": "Sala de TI",
     "descricao": "Recebe itens e registra retiradas na Sala de TI."
@@ -24,7 +24,7 @@
   {
     "id": "a0000000-0000-4000-8000-000000000004",
     "email": "gestor@example.com",
-    "nome": "Gestor Teste",
+    "nome": "Ricardo Lima",
     "role": "gestor",
     "descricao": "Acompanha o dashboard, o histórico e as configurações."
   }

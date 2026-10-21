@@ -8,6 +8,8 @@ import { COOKIE_SESSAO_DEMO, ehPapel, escreverSessaoDemo } from "@/lib/auth/sess
 import { dominiosPermitidos, envPublico } from "@/lib/env";
 import { dentroDoLimite } from "@/lib/limite";
 import { MODO_DEMO } from "@/lib/modo";
+import type { Papel } from "@/lib/supabase/database.types";
+import usuariosTeste from "@scripts/seed/usuarios-teste.json";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -86,7 +88,27 @@ export async function entrarDemo(formData: FormData) {
   redirect(destinoAposLogin(papel, next ? `?next=${encodeURIComponent(next)}` : ""));
 }
 
-const NOME_PADRAO = { aluno: "Aluno Teste", monitor: "Monitor Teste", equipe: "Equipe Teste", gestor: "Coordenação" };
+/** Nome de cada persona da demonstração (scripts/seed/usuarios-teste.json). */
+const NOME_PADRAO = Object.fromEntries(usuariosTeste.map((u) => [u.role, u.nome])) as Record<Papel, string>;
+
+/**
+ * Troca de perfil na demonstração, sem passar pelo login (botão "Trocar perfil").
+ * Usa a persona de cada papel, para a história da apresentação fazer sentido
+ * (ex.: "Pedido de Mariana Costa", "Registrado por Ana Souza").
+ */
+export async function trocarPerfilDemo(formData: FormData) {
+  if (!MODO_DEMO) throw new Error("Troca de perfil só existe na demonstração.");
+  const papel = formData.get("papel");
+  if (!ehPapel(papel)) throw new Error("Perfil inválido.");
+
+  (await cookies()).set(COOKIE_SESSAO_DEMO, escreverSessaoDemo({ papel, nome: NOME_PADRAO[papel] }), {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  });
+  redirect(destinoAposLogin(papel, ""));
+}
 
 export async function sair() {
   if (MODO_DEMO) {

@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { LogOut } from "lucide-react";
-import { sair } from "@/app/auth/actions";
+import { sair, trocarPerfilDemo } from "@/app/auth/actions";
+import { MODO_DEMO } from "@/lib/modo";
+import { PERFIS_DEMO } from "./perfis-demo";
 import { iniciais } from "@/lib/formato";
 import { cn } from "@/lib/utils";
 
@@ -59,6 +61,24 @@ export function MenuUsuario({ nome, detalhe, variante = "completo" }: MenuUsuari
             <p className="truncate text-label">{nome}</p>
             {detalhe && <p className="truncate text-caption text-muted">{detalhe}</p>}
           </div>
+          {MODO_DEMO && (
+            <div className="border-y border-border py-1">
+              <p className="px-3 pt-1 pb-1 text-caption text-muted">Demonstração · ver como</p>
+              {PERFIS_DEMO.map((perfil) => (
+                <form key={perfil.papel} action={trocarPerfilDemo}>
+                  <input type="hidden" name="papel" value={perfil.papel} />
+                  <button
+                    type="submit"
+                    role="menuitem"
+                    className="flex h-10 w-full items-center gap-2 rounded-lg px-3 text-label font-normal text-foreground hover:bg-border"
+                  >
+                    <perfil.icone className="size-4 text-muted" aria-hidden />
+                    {perfil.rotulo}
+                  </button>
+                </form>
+              ))}
+            </div>
+          )}
           <form action={sair}>
             <button
               type="submit"
