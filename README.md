@@ -103,3 +103,4 @@ docs/                    banco de dados, Supabase, testes
 - **Mesmas telas, duas fontes de dados.** As telas só conhecem um contrato (`Repositorio`); o modo demonstração e o Supabase usam a mesma montagem, então não divergem.
 - **Testado sem Docker.** RLS num Postgres em memória (PGlite); a camada de dados e o app inteiro contra Postgres 17 + PostgREST reais.
 - **Acessível.** Zero violações WCAG 2.1 A/AA no axe em todas as telas.
+# Fiap-AEP
