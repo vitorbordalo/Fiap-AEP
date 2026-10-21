@@ -11,12 +11,12 @@ O dono do projeto é o PM e desenvolvedor. Trabalhe em fases, explique decisões
 | 1. Fundação (projeto, tokens, componentes base, schema, RLS, migrations, este arquivo) | concluída |
 | 2. Dados e auth (seed, link mágico, perfis, proxy, `/dev/entrar`, login M1/A1) | concluída; falta criar o projeto Supabase real e testar o e-mail do link mágico |
 | 3 a 6. Telas de monitor, aluno, equipe e gestor | prontas nos dois modos (demonstração e Supabase), testadas por E2E contra Postgres + PostgREST reais |
-| 7. Acabamento | testes, acessibilidade (axe, zero violações) e README prontos; falta o deploy na Vercel (depende do Supabase real) |
+| 7. Acabamento | testes, acessibilidade (axe, zero violações) e README prontos; demonstração publicada na Vercel (https://achados-e-perdidos-fiap.vercel.app); falta o deploy com o Supabase real |
 | 8. Opcional: sugestão de categoria por IA atrás de feature flag | pendente |
 
 Atualize esta tabela ao terminar cada fase.
 
-Próximo passo: criar o projeto Supabase real (docs/supabase.md), testar o link mágico com e-mail de verdade e publicar na Vercel. O repositório ainda não foi enviado ao GitHub (falta a autorização do `gh`).
+Próximo passo: criar o projeto Supabase real (docs/supabase.md), testar o link mágico com e-mail de verdade e trocar o deploy da Vercel para o modo Supabase. O projeto da Vercel (`achados-e-perdidos-fiap`) ainda não está ligado ao GitHub: o deploy é feito pela CLI (`npx vercel deploy --prod`).
 
 ## Modo demonstração
 
@@ -27,6 +27,7 @@ Liga sozinho quando `NEXT_PUBLIC_SUPABASE_URL` não está definido (sem `.env.lo
 - Login provisório em `/login` e `/monitor/login`: qualquer usuário e senha, com escolha do perfil. A senha nem é enviada ao servidor; o cookie `ap_sessao_demo` guarda só perfil e nome. Com o Supabase configurado, o login volta a ser o link mágico.
 - Dados: `src/lib/dados/demo.ts`, em memória, gerados por `scripts/seed/dados.mjs`. Cadastros, pedidos e retiradas funcionam e somem quando o servidor reinicia. Fotos novas ficam como data URL.
 - Em produção, a demonstração só liga com `NEXT_PUBLIC_MODO_DEMO=1`; sem isso e sem Supabase, o proxy responde 503 com instruções.
+- Na Vercel (`VERCEL=1`), cada função tem a sua memória; por isso o retrato da demonstração fica na Runtime Cache (`src/lib/dados/demo-compartilhado.ts`), um por deploy, e as fotos em chaves à parte. Um deploy novo volta os dados ao início. Localmente nada disso liga.
 - As telas só usam `dados()` de `src/lib/dados`, que devolve `repositorioDemo` ou o repositório Supabase (`supabase.ts`). Os dois cumprem o contrato `Repositorio` (`tipos.ts`) e usam a mesma montagem (`montagem.ts`): regra nova entra na montagem, não nas telas.
 
 ## Comandos

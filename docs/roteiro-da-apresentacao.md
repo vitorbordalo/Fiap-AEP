@@ -12,6 +12,8 @@
 2. Abra **http://localhost:3000/login** no navegador, em tela cheia (F11), com zoom em 100%.
 3. Os dados são fictícios e ficam em memória: **Ctrl+C e `npm run demo` de novo** voltam tudo ao estado inicial.
 
+**Versão online:** https://achados-e-perdidos-fiap.vercel.app/login (mesma demonstração, boa para quem quiser abrir no celular). Os dados são compartilhados por quem acessa; para voltar ao início, publique de novo com `npx vercel deploy --prod`. Para apresentar, prefira o `npm run demo` local: não depende da internet.
+
 **Trocar de perfil durante a apresentação:** botão **"Demonstração"** no canto inferior esquerdo (ou o menu do avatar, no canto superior direito).
 
 ## 1. O problema (30 s)
