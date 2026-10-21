@@ -5,7 +5,9 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 type FluxoCadastro = {
   foto: Blob | null;
   fotoUrl: string | null;
-  definirFoto: (foto: Blob) => void;
+  /** Demonstração: foto de exemplo, trocada pela ilustração da categoria escolhida ao cadastrar. */
+  exemplo: boolean;
+  definirFoto: (foto: Blob, exemplo?: boolean) => void;
   limpar: () => void;
 };
 
@@ -14,6 +16,7 @@ const Contexto = createContext<FluxoCadastro | null>(null);
 /** Guarda a foto entre a câmera (M2) e os detalhes (M3) sem passar pela rede. */
 export function FluxoCadastroProvider({ children }: { children: React.ReactNode }) {
   const [foto, setFoto] = useState<Blob | null>(null);
+  const [exemplo, setExemplo] = useState(false);
   const fotoUrl = useMemo(() => (foto ? URL.createObjectURL(foto) : null), [foto]);
 
   useEffect(() => {
@@ -22,10 +25,16 @@ export function FluxoCadastroProvider({ children }: { children: React.ReactNode 
     };
   }, [fotoUrl]);
 
-  const definirFoto = useCallback((nova: Blob) => setFoto(nova), []);
-  const limpar = useCallback(() => setFoto(null), []);
+  const definirFoto = useCallback((nova: Blob, deExemplo = false) => {
+    setFoto(nova);
+    setExemplo(deExemplo);
+  }, []);
+  const limpar = useCallback(() => {
+    setFoto(null);
+    setExemplo(false);
+  }, []);
 
-  return <Contexto.Provider value={{ foto, fotoUrl, definirFoto, limpar }}>{children}</Contexto.Provider>;
+  return <Contexto.Provider value={{ foto, fotoUrl, exemplo, definirFoto, limpar }}>{children}</Contexto.Provider>;
 }
 
 export function useFluxoCadastro() {

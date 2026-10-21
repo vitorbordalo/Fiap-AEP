@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/feedback";
 import { toast } from "@/components/ui/toast";
 import { cadastrarItem } from "@/lib/acoes/cadastro";
+import { carregarImagem, comprimirImagem } from "@/lib/imagem";
 import type { Catalogo } from "@/lib/dados/tipos";
 import { useFluxoCadastro } from "../fluxo";
 
@@ -22,7 +23,7 @@ type FormularioMonitorProps = {
 /** M3 · Detalhes do item */
 export function FormularioMonitor({ catalogo, agoraIso, localPadraoId }: FormularioMonitorProps) {
   const router = useRouter();
-  const { foto, fotoUrl, limpar } = useFluxoCadastro();
+  const { foto, fotoUrl, exemplo, limpar } = useFluxoCadastro();
   const [enviando, iniciar] = useTransition();
   const [erros, setErros] = useState<Partial<Record<string, string>>>({});
 
@@ -48,10 +49,17 @@ export function FormularioMonitor({ catalogo, agoraIso, localPadraoId }: Formula
 
   function enviar(formData: FormData) {
     if (!foto) return;
-    const extensao = foto.type === "image/webp" ? "webp" : "jpg";
-    formData.set("foto", new File([foto], `foto.${extensao}`, { type: foto.type }));
 
     iniciar(async () => {
+      let fotoFinal = foto;
+      // demonstração: a foto de exemplo vira a ilustração da categoria escolhida (garrafa com foto de garrafa)
+      const categoria = catalogo.categorias.find((c) => c.id === formData.get("categoriaId"));
+      if (exemplo && categoria) {
+        fotoFinal = await comprimirImagem(await carregarImagem(`/seed/${categoria.icone}.svg`)).catch(() => foto);
+      }
+      const extensao = fotoFinal.type === "image/webp" ? "webp" : "jpg";
+      formData.set("foto", new File([fotoFinal], `foto.${extensao}`, { type: fotoFinal.type }));
+
       const resultado = await cadastrarItem(formData);
       if (!resultado.ok) {
         setErros(resultado.campos ?? {});
@@ -98,11 +106,12 @@ export function FormularioMonitor({ catalogo, agoraIso, localPadraoId }: Formula
               <img src={fotoUrl} alt="Foto capturada do item" className="size-full object-cover" />
               <span className="absolute inset-x-1 bottom-1 flex items-center justify-center gap-1 rounded-md bg-black/70 py-0.5 text-caption font-semibold">
                 <CircleCheck className="size-3 text-retirado" aria-hidden />
-                Capturada
+                {exemplo ? "Exemplo" : "Capturada"}
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <p className="text-label">Foto pronta</p>
+              <p className="text-label">{exemplo ? "Foto de exemplo" : "Foto pronta"}</p>
+              {exemplo && <p className="text-caption text-muted">Vira a ilustração da categoria escolhida.</p>}
               <Link href="/monitor" className="inline-flex min-h-10 items-center gap-2 text-label text-accent-text">
                 <Camera className="size-4" aria-hidden />
                 Refazer foto

@@ -11,7 +11,7 @@ function paraBlob(canvas: HTMLCanvasElement, tipo: string): Promise<Blob | null>
 }
 
 /** Redimensiona e comprime uma imagem (arquivo da galeria ou quadro da câmera). */
-export async function comprimirImagem(origem: Blob | HTMLVideoElement): Promise<Blob> {
+export async function comprimirImagem(origem: Blob | HTMLVideoElement | HTMLImageElement): Promise<Blob> {
   let largura: number;
   let altura: number;
   let desenhavel: CanvasImageSource;
@@ -21,6 +21,10 @@ export async function comprimirImagem(origem: Blob | HTMLVideoElement): Promise<
     largura = bitmap.width;
     altura = bitmap.height;
     desenhavel = bitmap;
+  } else if (origem instanceof HTMLImageElement) {
+    largura = origem.naturalWidth;
+    altura = origem.naturalHeight;
+    desenhavel = origem;
   } else {
     largura = origem.videoWidth;
     altura = origem.videoHeight;
@@ -41,4 +45,14 @@ export async function comprimirImagem(origem: Blob | HTMLVideoElement): Promise<
   const jpeg = await paraBlob(canvas, "image/jpeg");
   if (!jpeg) throw new Error("Não foi possível processar a foto.");
   return jpeg;
+}
+
+/** Carrega uma imagem do próprio app (ex.: foto de exemplo da demonstração). */
+export function carregarImagem(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const imagem = new Image();
+    imagem.onload = () => resolve(imagem);
+    imagem.onerror = () => reject(new Error("Não foi possível carregar a imagem."));
+    imagem.src = url;
+  });
 }

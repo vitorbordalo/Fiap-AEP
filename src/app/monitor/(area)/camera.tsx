@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Camera as IconeCamera, CameraOff, Images, Loader2, ScanLine } from "lucide-react";
+import { Camera as IconeCamera, CameraOff, Images, Loader2, ScanLine, Sparkles } from "lucide-react";
 import { MenuUsuario } from "@/components/layout/menu-usuario";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
-import { comprimirImagem } from "@/lib/imagem";
+import { carregarImagem, comprimirImagem } from "@/lib/imagem";
+import { MODO_DEMO } from "@/lib/modo";
 import { useFluxoCadastro } from "./fluxo";
 
 type Estado = "abrindo" | "pronta" | "indisponivel";
@@ -55,10 +56,20 @@ export function Camera({ usuario }: { usuario: string }) {
     };
   }, []);
 
-  async function usarFoto(origem: Blob | HTMLVideoElement) {
+  /** Demonstração: plano B para apresentar sem webcam (ou com a permissão negada). */
+  async function usarFotoDeExemplo() {
+    // neutra por enquanto: no cadastro ela vira a ilustração da categoria escolhida
+    await usarFoto(await carregarImagem("/seed/package.svg").catch(() => null), true);
+  }
+
+  async function usarFoto(origem: Blob | HTMLVideoElement | HTMLImageElement | null, exemplo = false) {
+    if (!origem) {
+      toast.error("Não foi possível carregar a foto de exemplo.");
+      return;
+    }
     setProcessando(true);
     try {
-      definirFoto(await comprimirImagem(origem));
+      definirFoto(await comprimirImagem(origem), exemplo);
       router.push("/monitor/novo");
     } catch {
       toast.error("Não foi possível usar esta foto. Tente de novo.");
@@ -115,6 +126,11 @@ export function Camera({ usuario }: { usuario: string }) {
             <IconeCamera aria-hidden />
             Tirar foto
           </Button>
+          {MODO_DEMO && (
+            <Button variant="secondary" onClick={usarFotoDeExemplo} disabled={processando}>
+              Usar foto de exemplo
+            </Button>
+          )}
         </div>
       )}
 
@@ -137,7 +153,20 @@ export function Camera({ usuario }: { usuario: string }) {
         >
           {processando ? <Loader2 className="size-7 animate-spin" aria-hidden /> : <IconeCamera className="size-7" aria-hidden />}
         </button>
-        <span className="size-14" />
+        {MODO_DEMO ? (
+          <button
+            type="button"
+            onClick={usarFotoDeExemplo}
+            disabled={processando}
+            className="grid size-14 place-items-center rounded-full bg-white/10 text-foreground hover:bg-white/20 disabled:opacity-50"
+            aria-label="Usar foto de exemplo"
+            title="Usar foto de exemplo (demonstração)"
+          >
+            <Sparkles className="size-6" aria-hidden />
+          </button>
+        ) : (
+          <span className="size-14" />
+        )}
       </footer>
 
       <input ref={entradaCamera} type="file" accept="image/*" capture="environment" className="sr-only" onChange={aoEscolherArquivo} tabIndex={-1} aria-hidden />

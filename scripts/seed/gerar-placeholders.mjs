@@ -20,6 +20,8 @@ const ICONES = {
   "id-card": "IdCard",
   umbrella: "Umbrella",
   ellipsis: "Ellipsis",
+  // neutra: foto de exemplo da demonstração e reserva quando a foto de um item não carrega
+  package: "Package",
 };
 
 const pasta = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../public/seed");
