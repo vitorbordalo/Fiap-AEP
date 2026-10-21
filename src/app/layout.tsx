@@ -26,8 +26,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR" className={inter.variable}>
-      <body>
+    // suppressHydrationWarning só nestes dois: extensões do navegador (gerenciadores de senha, corretores)
+    // costumam acrescentar atributos em <html>/<body> antes de o React carregar
+    <html lang="pt-BR" className={inter.variable} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         {children}
         <Toaster />
         <RastreadorDeNavegacao />

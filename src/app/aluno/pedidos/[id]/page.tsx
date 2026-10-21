@@ -48,7 +48,7 @@ export default async function AlunoPedidoDetalhePage({ params, searchParams }: P
               </span>
             </span>
             <h2 className="text-display">Pedido enviado!</h2>
-            <p className="max-w-xs text-body text-muted">Retire no {item.local.nome} com sua carteirinha.</p>
+            <p className="max-w-xs text-body text-muted">Leve sua carteirinha e retire no local indicado abaixo.</p>
           </section>
         ) : (
           <section className="flex flex-col gap-2 pt-2">
