@@ -84,8 +84,8 @@ export function NovoItem({ catalogo, agoraIso, localPadraoId, modo }: NovoItemPr
         enviar(new FormData(e.currentTarget));
       }}
     >
-      <div className="grid grid-cols-12 gap-8">
-        <div className="col-span-5 flex flex-col gap-3">
+      <div className="grid gap-6 lg:grid-cols-12 lg:gap-8">
+        <div className="flex flex-col gap-3 lg:col-span-5">
           <button
             type="button"
             onClick={() => entrada.current?.click()}
@@ -119,7 +119,7 @@ export function NovoItem({ catalogo, agoraIso, localPadraoId, modo }: NovoItemPr
           <input ref={entrada} type="file" accept="image/*" className="sr-only" onChange={escolherFoto} tabIndex={-1} aria-hidden />
         </div>
 
-        <div className="col-span-7">
+        <div className="lg:col-span-7">
           <CamposDoCadastro catalogo={catalogo} agoraIso={agoraIso} localPadraoId={localPadraoId} erros={erros} layout="desktop" />
         </div>
       </div>

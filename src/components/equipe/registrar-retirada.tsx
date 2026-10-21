@@ -119,10 +119,10 @@ export function RegistrarRetirada({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex gap-5 rounded-xl border border-border bg-background/40 p-4">
-        <FotoDoItem url={item.fotoUrl} categoria={item.categoria} comIcone className="aspect-[4/3] w-44 shrink-0 rounded-lg" />
+      <div className="flex gap-4 rounded-xl border border-border bg-background/40 p-3 sm:gap-5 sm:p-4">
+        <FotoDoItem url={item.fotoUrl} categoria={item.categoria} comIcone className="aspect-[4/3] w-24 shrink-0 rounded-lg sm:w-44" />
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
             <div>
               <p className="text-title">{item.categoria.nome}</p>
               <p className="text-label font-normal text-muted">
@@ -167,7 +167,7 @@ export function RegistrarRetirada({
       </section>
 
       {!pedido && (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid gap-3 sm:grid-cols-3">
           <Select
             label="Sala que o aluno informou"
             icon={DoorOpen}
@@ -206,17 +206,17 @@ export function RegistrarRetirada({
         <table className="w-full overflow-hidden rounded-xl border border-border text-left text-label font-normal">
           <thead className="bg-surface-elevated text-muted">
             <tr>
-              <th scope="col" className="px-4 py-3 font-normal">Campo</th>
-              <th scope="col" className="px-4 py-3 font-normal">Cadastro</th>
-              <th scope="col" className="px-4 py-3 font-normal">{pedido ? "Informado pelo aluno" : "Informado no balcão"}</th>
+              <th scope="col" className="px-3 py-3 font-normal sm:px-4">Campo</th>
+              <th scope="col" className="px-3 py-3 font-normal sm:px-4">Cadastro</th>
+              <th scope="col" className="px-3 py-3 font-normal sm:px-4">{pedido ? "Informado pelo aluno" : "Informado no balcão"}</th>
             </tr>
           </thead>
           <tbody>
             {linhas.map((l) => (
               <tr key={l.campo} className="border-t border-border">
-                <th scope="row" className="px-4 py-3 font-normal text-muted">{l.campo}</th>
-                <td className="px-4 py-3">{l.cadastro}</td>
-                <td className="px-4 py-3">
+                <th scope="row" className="px-3 py-3 font-normal text-muted sm:px-4">{l.campo}</th>
+                <td className="px-3 py-3 sm:px-4">{l.cadastro}</td>
+                <td className="px-3 py-3 sm:px-4">
                   {l.informado ? (
                     <span className={cn("inline-flex items-center gap-2", l.bate === true && "text-retirado-text", l.bate === false && "text-aguardando-text")}>
                       {l.informado}
@@ -243,7 +243,7 @@ export function RegistrarRetirada({
         <h3 id="quem-retira" className="text-label font-semibold">
           Quem está retirando
         </h3>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="RM"
             inputMode="numeric"

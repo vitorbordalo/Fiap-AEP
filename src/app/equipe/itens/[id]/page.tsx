@@ -58,14 +58,14 @@ export default async function EquipeItemPage({ params }: PageProps<"/equipe/iten
           {lista.rotulo}
         </LinkVoltar>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <h1 className="text-display">{item.categoria.nome}</h1>
           <span className="font-mono text-body text-muted">{formatarCodigo(item.codigo)}</span>
           <StatusBadge status={item.status} />
         </div>
 
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-7 flex flex-col gap-4">
+        <div className="grid gap-6 lg:grid-cols-12">
+          <div className="flex flex-col gap-4 lg:col-span-7">
             <FotoDoItem url={item.fotoUrl} categoria={item.categoria} comIcone className="aspect-[16/10] w-full rounded-xl">
               <span className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-caption">
                 <DoorOpen className="size-3.5" aria-hidden />
@@ -73,7 +73,7 @@ export default async function EquipeItemPage({ params }: PageProps<"/equipe/iten
               </span>
             </FotoDoItem>
 
-            <dl className="grid grid-cols-3 gap-x-6 gap-y-5 rounded-xl border border-border bg-surface p-5">
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 rounded-xl border border-border bg-surface p-5">
               <Dado icone={<Tag aria-hidden />} rotulo="Categoria">
                 {item.categoria.nome}
               </Dado>
@@ -102,7 +102,7 @@ export default async function EquipeItemPage({ params }: PageProps<"/equipe/iten
             )}
           </div>
 
-          <div className="col-span-5 flex flex-col gap-4">
+          <div className="flex flex-col gap-4 lg:col-span-5">
             {item.retirada ? (
               <section className="flex flex-col gap-4 rounded-xl border border-l-4 border-border border-l-retirado bg-surface p-5" aria-labelledby="retirada">
                 <h2 id="retirada" className="text-caption tracking-wider text-muted uppercase">
@@ -182,7 +182,7 @@ export default async function EquipeItemPage({ params }: PageProps<"/equipe/iten
             </section>
 
             {item.retirada && (
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <BotaoDesfazer retiradaId={item.retirada.id} nome={item.retirada.nome} />
                 <span className="text-caption text-disabled">Ação registrada no histórico</span>
               </div>

@@ -17,26 +17,27 @@ type CardItemProps = {
   mostrarStatus?: boolean;
 };
 
-/** Card de item das listas da equipe (E2, E3, E4). */
+/** Card de item das listas da equipe (E2, E3, E4). No celular, compacto: miniatura à esquerda e dados à direita. */
 export function CardItem({ item, diasParaAguardando, mostrarStatus = false }: CardItemProps) {
   const detalhe = `/equipe/itens/${item.id}`;
   const [primeiroPedido, ...outrosPedidos] = item.pedidosPendentes;
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-surface">
-      <Link href={detalhe} tabIndex={-1} aria-hidden>
-        <FotoDoItem url={item.fotoUrl} categoria={item.categoria} comIcone className="aspect-[16/10] w-full">
-          {mostrarStatus && <StatusBadge status={item.status} className="absolute top-3 right-3 bg-black/70" />}
+    <article className="flex h-full overflow-hidden rounded-xl border border-border bg-surface sm:flex-col">
+      <Link href={detalhe} tabIndex={-1} aria-hidden className="w-28 shrink-0 sm:w-auto">
+        <FotoDoItem url={item.fotoUrl} categoria={item.categoria} comIcone className="h-full min-h-28 w-full sm:aspect-[16/10] sm:h-auto">
+          {mostrarStatus && <StatusBadge status={item.status} className="absolute top-3 right-3 bg-black/70 max-sm:hidden" />}
         </FotoDoItem>
       </Link>
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <div className="flex items-baseline justify-between gap-2">
+      <div className="flex min-w-0 flex-1 flex-col gap-2 p-3 sm:p-4">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-2">
           <Link href={detalhe} className="text-body font-semibold hover:underline">
             {item.categoria.nome}
           </Link>
           <span className="font-mono text-caption text-muted">{formatarCodigo(item.codigo)}</span>
         </div>
+        {mostrarStatus && <StatusBadge status={item.status} className="self-start sm:hidden" />}
 
         {item.retirada ? (
           <>

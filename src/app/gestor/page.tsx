@@ -89,7 +89,8 @@ export default async function GestorDashboardPage({ searchParams }: PageProps<"/
     },
     {
       rotulo: "Tempo médio até a retirada",
-      valor: kpis.tempoMedioRetirada === null ? "—" : `${numero.format(kpis.tempoMedioRetirada)} dias`,
+      valor: kpis.tempoMedioRetirada === null ? "—" : numero.format(kpis.tempoMedioRetirada),
+      unidade: kpis.tempoMedioRetirada === null ? undefined : "dias",
       variacao:
         kpis.tempoMedioRetirada !== null && kpis.tempoMedioRetiradaAnterior !== null
           ? variacao(kpis.tempoMedioRetirada, kpis.tempoMedioRetiradaAnterior, {
@@ -105,21 +106,21 @@ export default async function GestorDashboardPage({ searchParams }: PageProps<"/
   return (
     <ConteudoDesktop>
       <div className="flex flex-col gap-6">
-        <div className="flex items-end justify-between gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-display">Dashboard</h1>
             <p className="text-body text-muted">
               {painel.periodo.rotulo} · {nomeDoLocal}
             </p>
           </div>
-          <nav aria-label="Período" className="flex gap-1 rounded-full border border-border p-1">
+          <nav aria-label="Período" className="flex gap-1 self-start rounded-full border border-border p-1 sm:self-auto">
             {PERIODOS.map((p) => (
               <Link
                 key={p.valor}
                 href={p.valor === "30d" ? "/gestor" : `/gestor?periodo=${p.valor}`}
                 aria-current={periodo === p.valor ? "true" : undefined}
                 className={cn(
-                  "flex h-9 items-center rounded-full px-4 text-label",
+                  "flex h-9 items-center rounded-full px-4 text-label whitespace-nowrap",
                   periodo === p.valor ? "bg-surface-elevated text-foreground" : "text-muted hover:text-foreground",
                 )}
               >
@@ -129,20 +130,23 @@ export default async function GestorDashboardPage({ searchParams }: PageProps<"/
           </nav>
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
           {cartoes.map((c) => (
-            <div key={c.rotulo} className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-5">
+            <div key={c.rotulo} className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-4 lg:p-5">
               <p className="text-label font-normal text-muted">{c.rotulo}</p>
-              <p className="text-kpi">{c.valor}</p>
+              <p className="text-kpi">
+                {c.valor}
+                {c.unidade && <span className="ml-1.5 text-body font-semibold text-muted">{c.unidade}</span>}
+              </p>
               <TextoVariacao variacao={c.variacao} />
             </div>
           ))}
-          <div className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-5">
+          <div className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-4 lg:p-5">
             <p className="text-label font-normal text-muted">Aguardando retirada agora</p>
             <p className="text-kpi">{kpis.aguardandoAgora}</p>
             {kpis.aguardandoAgora > 0 ? (
-              <span className="flex items-center gap-1 text-caption text-aguardando-text">
-                <TriangleAlert className="size-3.5" aria-hidden />
+              <span className="flex items-start gap-1 text-caption text-aguardando-text">
+                <TriangleAlert className="mt-0.5 size-3.5 shrink-0" aria-hidden />
                 Há mais de {plural(catalogo.diasParaAguardando, "dia")} no local
               </span>
             ) : (
@@ -152,7 +156,7 @@ export default async function GestorDashboardPage({ searchParams }: PageProps<"/
         </div>
 
         {painel.destaque && (
-          <p className="flex items-center gap-4 rounded-xl border border-l-4 border-border border-l-accent bg-surface p-4 text-label font-normal">
+          <p className="flex items-start gap-3 rounded-xl border border-l-4 sm:items-center sm:gap-4 border-border border-l-accent bg-surface p-4 text-label font-normal">
             <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-surface-elevated">
               <Lightbulb className="size-5 text-accent-text" aria-hidden />
             </span>
@@ -172,9 +176,9 @@ export default async function GestorDashboardPage({ searchParams }: PageProps<"/
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-4">
-              <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5" aria-labelledby="por-sala">
-                <div className="flex items-baseline justify-between">
+            <div className="grid gap-4 lg:grid-cols-2">
+              <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 lg:p-5" aria-labelledby="por-sala">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                   <h2 id="por-sala" className="text-title">
                     Onde mais se perde
                   </h2>
@@ -185,8 +189,8 @@ export default async function GestorDashboardPage({ searchParams }: PageProps<"/
                   descricao={`Itens por sala: ${painel.porSala.map((s) => `${s.nome}, ${s.total}`).join("; ")}`}
                 />
               </section>
-              <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5" aria-labelledby="por-categoria">
-                <div className="flex items-baseline justify-between">
+              <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 lg:p-5" aria-labelledby="por-categoria">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                   <h2 id="por-categoria" className="text-title">
                     O que mais se perde
                   </h2>
@@ -199,8 +203,8 @@ export default async function GestorDashboardPage({ searchParams }: PageProps<"/
               </section>
             </div>
 
-            <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5" aria-labelledby="quando">
-              <div className="flex items-baseline justify-between">
+            <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 lg:p-5" aria-labelledby="quando">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                 <h2 id="quando" className="text-title">
                   Quando os itens são perdidos
                 </h2>

@@ -16,7 +16,7 @@ const ROTULO_PAPEL: Record<Papel, string> = { gestor: "Coordenação", equipe: "
 
 function Secao({ titulo, descricao, children }: { titulo: string; descricao: string; children: React.ReactNode }) {
   return (
-    <section className="flex flex-col gap-5 rounded-xl border border-border bg-surface p-6">
+    <section className="flex flex-col gap-5 rounded-xl border border-border bg-surface p-4 lg:p-6">
       <div>
         <h2 className="text-title">{titulo}</h2>
         <p className="text-label font-normal text-muted">{descricao}</p>
@@ -47,7 +47,7 @@ export default async function GestorConfiguracoesPage() {
           <ul className="divide-y divide-border rounded-xl border border-border">
             {config.locais.map((local) => (
               <li key={local.id} className="flex items-center gap-4 px-4 py-3">
-                <span className="grid size-10 place-items-center rounded-lg bg-surface-elevated text-muted">
+                <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-surface-elevated text-muted">
                   {ehSalaDeTi(local) ? <Monitor className="size-5" aria-hidden /> : <MapPin className="size-5" aria-hidden />}
                 </span>
                 <div>
@@ -62,18 +62,20 @@ export default async function GestorConfiguracoesPage() {
         <Secao titulo="Equipe" descricao="Quem tem acesso de monitor, equipe ou coordenação. Todo mundo que entra pela primeira vez é aluno.">
           <ul className="divide-y divide-border rounded-xl border border-border">
             {config.pessoas.map((pessoa) => (
-              <li key={pessoa.id} className="flex items-center gap-4 px-4 py-3">
-                <span className="grid size-10 place-items-center rounded-full bg-surface-elevated text-caption font-semibold">
+              <li key={pessoa.id} className="flex items-center gap-3 px-3 py-3 lg:gap-4 lg:px-4">
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-elevated text-caption font-semibold">
                   {iniciais(pessoa.nome)}
                 </span>
                 <div className="flex min-w-0 flex-1 flex-col">
-                  <p className="flex items-center gap-2 text-label">
+                  <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-label">
                     {pessoa.nome}
                     <Badge tone={pessoa.papel === "monitor" ? "recebido" : "neutro"}>{ROTULO_PAPEL[pessoa.papel]}</Badge>
                   </p>
-                  <p className="flex items-center gap-1 truncate text-caption text-muted">
-                    <MapPin className="size-3" aria-hidden />
-                    {pessoa.local?.nome ?? "Todos os locais"} · {pessoa.email}
+                  <p className="flex min-w-0 items-center gap-1 text-caption text-muted">
+                    <MapPin className="size-3 shrink-0" aria-hidden />
+                    <span className="truncate">
+                      {pessoa.local?.nome ?? "Todos os locais"} · {pessoa.email}
+                    </span>
                   </p>
                 </div>
                 <EditarPessoa pessoa={pessoa} locais={config.locais} />
@@ -86,7 +88,7 @@ export default async function GestorConfiguracoesPage() {
         <Secao titulo="Categorias" descricao="Usadas no cadastro rápido e nos filtros de busca.">
           <ul className="flex flex-wrap gap-2">
             {config.categorias.map((c) => (
-              <li key={c.id} className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-4 text-label font-normal">
+              <li key={c.id} className="inline-flex min-h-10 flex-wrap items-center gap-x-2 rounded-full border border-border px-4 py-2 text-label font-normal">
                 <span className="size-2 rounded-full" style={{ background: c.cor }} aria-hidden />
                 <CategoryIcon icon={c.icone} className="size-4" />
                 {c.nome}

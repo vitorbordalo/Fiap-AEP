@@ -101,8 +101,8 @@ export async function ListaDeItens({ status, localId, params }: { status: ItemSt
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-3 rounded-xl border border-border bg-surface p-3">
-          <form action={caminho} className="relative w-80 shrink-0">
+        <div className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-3 lg:flex-row lg:items-center">
+          <form action={caminho} className="relative w-full lg:w-80 lg:shrink-0">
             {categoriaId && <input type="hidden" name="categoria" value={categoriaId} />}
             {soComPedido && <input type="hidden" name="pedido" value="1" />}
             {status === "retirado" && <input type="hidden" name="periodo" value={periodo} />}
@@ -117,7 +117,7 @@ export async function ListaDeItens({ status, localId, params }: { status: ItemSt
             />
           </form>
 
-          <nav aria-label="Filtrar por categoria" className="flex min-w-0 flex-1 gap-2 overflow-x-auto py-1 pr-6 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)] [scrollbar-width:none]">
+          <nav aria-label="Filtrar por categoria" className="flex min-w-0 gap-2 overflow-x-auto py-1 pr-6 lg:flex-1 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)] [scrollbar-width:none]">
             <Link href={link({ categoria: undefined })} className={chipClasses(!categoriaId)} aria-current={!categoriaId ? "true" : undefined}>
               Todos
             </Link>
@@ -134,10 +134,10 @@ export async function ListaDeItens({ status, localId, params }: { status: ItemSt
             ))}
           </nav>
 
-          <div className="h-8 w-px shrink-0 bg-border" aria-hidden />
+          <div className="h-8 w-px shrink-0 bg-border max-lg:hidden" aria-hidden />
 
           {status === "retirado" ? (
-            <nav aria-label="Período" className="flex shrink-0 gap-1">
+            <nav aria-label="Período" className="flex shrink-0 gap-1 overflow-x-auto [scrollbar-width:none]">
               {PERIODOS.map((p) => (
                 <Link key={p.valor} href={link({ periodo: p.valor })} className={chipClasses(periodo === p.valor)} aria-current={periodo === p.valor ? "true" : undefined}>
                   {p.rotulo}
@@ -145,7 +145,7 @@ export async function ListaDeItens({ status, localId, params }: { status: ItemSt
               ))}
             </nav>
           ) : (
-            <Link href={link({ pedido: soComPedido ? undefined : "1" })} className={chipClasses(soComPedido)} aria-current={soComPedido ? "true" : undefined}>
+            <Link href={link({ pedido: soComPedido ? undefined : "1" })} className={cn(chipClasses(soComPedido), "self-start lg:self-auto")} aria-current={soComPedido ? "true" : undefined}>
               <span className={cn("size-1.5 rounded-full", soComPedido ? "bg-white" : "bg-aguardando")} aria-hidden />
               Só com pedido
             </Link>
@@ -155,7 +155,7 @@ export async function ListaDeItens({ status, localId, params }: { status: ItemSt
       </div>
 
       {itens.length > 0 ? (
-        <ul className="grid grid-cols-3 gap-6">
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {itens.map((item) => (
             <li key={item.id} className="flex">
               <div className="flex-1">

@@ -19,7 +19,7 @@ export function SeletorLocal({ locais, atual }: SeletorLocalProps) {
   const [trocando, iniciar] = useTransition();
 
   return (
-    <div className={cn("relative", trocando && "opacity-60")}>
+    <div className={cn("relative min-w-0", trocando && "opacity-60")}>
       <MapPin className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" aria-hidden />
       <select
         aria-label="Local exibido"
@@ -32,7 +32,7 @@ export function SeletorLocal({ locais, atual }: SeletorLocalProps) {
             router.refresh();
           });
         }}
-        className="h-10 appearance-none rounded-full border border-border bg-transparent pr-9 pl-9 text-label text-foreground hover:bg-surface-elevated focus:border-accent focus:outline-none"
+        className="h-10 w-full max-w-48 appearance-none truncate rounded-full lg:max-w-none border border-border bg-transparent pr-9 pl-9 text-label text-foreground hover:bg-surface-elevated focus:border-accent focus:outline-none"
       >
         <option value="todos">Todos os locais</option>
         {locais.map((l) => (

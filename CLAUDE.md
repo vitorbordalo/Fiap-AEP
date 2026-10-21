@@ -176,6 +176,7 @@ Detalhes e matriz de permissões em `docs/banco-de-dados.md`. Pontos que não po
 ## Qualidade e UX
 
 - Mobile-first em M e A: largura máxima de 430px centralizada (`max-w-mobile`), botão principal fixo no rodapé, toque de pelo menos 48px.
+- E e G nasceram para o desktop, mas também funcionam no celular: a base das classes é o celular e o prefixo `lg:` mantém o layout desktop. No celular, o topo mostra só o "F" e o avatar, as grades viram uma coluna, as listas usam cartões compactos e o histórico (G2) vira cartões no lugar da tabela. `e2e/celular.spec.ts` garante que nenhuma tela role para o lado.
 - M2: câmera com `getUserMedia` (traseira) e fallback `<input type="file" accept="image/*" capture="environment">`. Comprimir no navegador antes do upload (lado maior 1600px, WebP).
 - Toda ação mostra toast; "Desfazer" quando fizer sentido.
 - Skeleton, vazio e erro em todas as listas.

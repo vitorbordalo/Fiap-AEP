@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 type MenuUsuarioProps = {
   nome: string;
   detalhe?: string;
-  /** "compacto" = só o avatar (mobile); "completo" = avatar + nome (desktop). */
+  /** "compacto" = só o avatar (mobile); "completo" = avatar + nome no desktop e só o avatar no celular. */
   variante?: "compacto" | "completo";
 };
 
@@ -43,14 +43,16 @@ export function MenuUsuario({ nome, detalhe, variante = "completo" }: MenuUsuari
         aria-haspopup="menu"
         className={cn(
           "flex items-center gap-2 rounded-full transition-colors hover:bg-surface-elevated",
-          variante === "completo" ? "h-10 border border-border py-1 pr-4 pl-1" : "size-12 justify-center",
+          variante === "completo"
+            ? "size-12 justify-center lg:h-10 lg:w-auto lg:justify-start lg:border lg:border-border lg:py-1 lg:pr-4 lg:pl-1"
+            : "size-12 justify-center",
         )}
       >
         <span className="grid size-8 place-items-center rounded-full bg-accent/15 text-caption font-semibold text-accent-text">
           {iniciais(nome)}
         </span>
         {/* o nome acessível é o próprio texto do botão: iniciais + nome (visível no desktop, só para leitor de tela no celular) */}
-        <span className={variante === "completo" ? "text-label" : "sr-only"}>
+        <span className={variante === "completo" ? "text-label max-lg:sr-only" : "sr-only"}>
           {variante === "completo" ? nome : `Menu de ${nome}`}
         </span>
       </button>

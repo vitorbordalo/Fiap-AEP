@@ -48,7 +48,7 @@ export function FormularioDias({ atual }: { atual: number }) {
         e.preventDefault();
         executar(() => salvarDias(dias));
       }}
-      className="flex items-center justify-between gap-6 rounded-xl border border-border bg-background/40 p-4"
+      className="flex flex-col gap-4 rounded-xl border border-border bg-background/40 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
     >
       <div>
         <label htmlFor="dias" className="text-label">
@@ -90,7 +90,7 @@ function CamposPapel({
   locais: Local[];
 }) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid gap-4 sm:grid-cols-2">
       <Select label="Perfil" icon={UserCog} value={papel} onChange={(e) => setPapel(e.target.value as Papel)} options={PAPEIS} />
       <Select
         label="Local (equipe)"

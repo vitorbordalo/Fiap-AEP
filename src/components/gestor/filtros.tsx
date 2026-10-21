@@ -13,7 +13,7 @@ export function FormularioDeFiltros({ acao, children }: { acao: string; children
       onChange={(e) => {
         if (e.target instanceof HTMLSelectElement) form.current?.requestSubmit();
       }}
-      className="flex items-center gap-3"
+      className="flex flex-col gap-3 sm:flex-row sm:items-center"
     >
       {children}
     </form>

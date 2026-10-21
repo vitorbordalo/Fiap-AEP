@@ -58,7 +58,7 @@ export default async function EquipeInicioPage({ searchParams }: PageProps<"/equ
 
   return (
     <ConteudoDesktop>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6 lg:gap-8">
         <div className="flex items-end justify-between gap-4">
           <div>
             <h1 className="text-display">Itens</h1>
@@ -95,7 +95,7 @@ export default async function EquipeInicioPage({ searchParams }: PageProps<"/equ
               </Link>
             </div>
             {resultados.length > 0 ? (
-              <ul className="grid grid-cols-3 gap-6">
+              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
                 {resultados.map((item) => (
                   <li key={item.id}>
                     <CardItem item={item} diasParaAguardando={n} mostrarStatus />
@@ -108,18 +108,18 @@ export default async function EquipeInicioPage({ searchParams }: PageProps<"/equ
           </section>
         )}
 
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid gap-3 sm:grid-cols-3 lg:gap-6">
           {cartoes.map((c) => (
             <Link
               key={c.href}
               href={c.href}
-              className="group flex flex-col gap-4 rounded-xl border border-border bg-surface p-6 transition-colors hover:bg-surface-elevated"
+              className="group grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 rounded-xl border border-border bg-surface p-4 transition-colors hover:bg-surface-elevated sm:flex sm:flex-col sm:items-stretch sm:gap-4 lg:p-6"
             >
               <span className="flex items-center gap-2 text-label">
                 <span className={cn("size-2 rounded-full", c.ponto)} aria-hidden />
                 {c.titulo}
               </span>
-              <span className="text-kpi">{c.total}</span>
+              <span className="col-start-2 row-span-2 row-start-1 text-kpi">{c.total}</span>
               <span className="flex items-center justify-between gap-2">
                 <span className="flex flex-col gap-2">
                   <span className="text-label font-normal text-muted">{c.descricao}</span>
@@ -134,7 +134,7 @@ export default async function EquipeInicioPage({ searchParams }: PageProps<"/equ
                     </span>
                   )}
                 </span>
-                <ArrowRight className="size-5 text-muted transition-transform group-hover:translate-x-1" aria-hidden />
+                <ArrowRight className="size-5 text-muted transition-transform group-hover:translate-x-1 max-sm:hidden" aria-hidden />
               </span>
             </Link>
           ))}
@@ -157,8 +157,11 @@ export default async function EquipeInicioPage({ searchParams }: PageProps<"/equ
           ) : (
             <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
               {resumo.pedidosPendentes.map(({ pedido, item }) => (
-                <li key={pedido.id} className="grid grid-cols-[1.4fr_1.2fr_0.8fr_auto] items-center gap-4 px-5 py-4">
-                  <Link href={`/equipe/itens/${item.id}`} className="flex items-center gap-3 hover:underline">
+                <li
+                  key={pedido.id}
+                  className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-3 px-4 py-4 lg:grid-cols-[1.4fr_1.2fr_0.8fr_auto] lg:gap-4 lg:px-5"
+                >
+                  <Link href={`/equipe/itens/${item.id}`} className="flex min-w-0 items-center gap-3 hover:underline">
                     <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-surface-elevated">
                       <CategoryIcon icon={item.categoria.icone} color={item.categoria.cor} />
                     </span>
@@ -167,13 +170,15 @@ export default async function EquipeInicioPage({ searchParams }: PageProps<"/equ
                       <span className="font-mono text-caption text-muted">{formatarCodigo(item.codigo)}</span>
                     </span>
                   </Link>
-                  <span className="flex items-center gap-3">
-                    <span className="grid size-8 place-items-center rounded-full bg-surface-elevated text-caption font-semibold">
+                  <span className="col-start-1 row-start-2 flex min-w-0 items-center gap-3 lg:col-start-auto lg:row-start-auto">
+                    <span className="grid size-8 shrink-0 place-items-center rounded-full bg-surface-elevated text-caption font-semibold">
                       {iniciais(pedido.aluno.nome)}
                     </span>
-                    <span className="text-label font-normal">{pedido.aluno.nome}</span>
+                    <span className="truncate text-label font-normal">{pedido.aluno.nome}</span>
                   </span>
-                  <span className="text-label font-normal text-muted">{formatarRelativo(pedido.criadoEm)}</span>
+                  <span className="col-start-2 row-start-1 justify-self-end text-label font-normal text-muted lg:col-start-auto lg:row-start-auto lg:justify-self-auto">
+                    {formatarRelativo(pedido.criadoEm)}
+                  </span>
                   <Button asChild variant="secondary" size="sm">
                     <Link href={`/equipe/itens/${item.id}/retirada?pedido=${pedido.id}`}>Registrar retirada</Link>
                   </Button>

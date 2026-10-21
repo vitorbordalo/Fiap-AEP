@@ -67,7 +67,7 @@ export function CamposDoCadastro({ catalogo, agoraIso, localPadraoId, erros = {}
         )}
       </fieldset>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className={cn("grid gap-3", layout === "desktop" ? "sm:grid-cols-2" : "grid-cols-2")}>
         <Select
           label={layout === "desktop" ? "Sala onde foi encontrado" : "Sala"}
           name="salaId"

@@ -14,7 +14,7 @@ const ABAS = [
 export function AbasGestor() {
   const pathname = usePathname();
   return (
-    <nav aria-label="Seções da coordenação" className="mx-auto flex max-w-desktop gap-6 px-8">
+    <nav aria-label="Seções da coordenação" className="mx-auto flex max-w-desktop gap-6 overflow-x-auto px-4 [scrollbar-width:none] lg:px-8">
       {ABAS.map((aba) => {
         const ativa = aba.href === "/gestor" ? pathname === "/gestor" : pathname.startsWith(aba.href);
         return (
@@ -23,7 +23,7 @@ export function AbasGestor() {
             href={aba.href}
             aria-current={ativa ? "page" : undefined}
             className={cn(
-              "-mb-px flex h-12 items-center border-b-2 text-label",
+              "-mb-px flex h-12 shrink-0 items-center border-b-2 text-label",
               ativa ? "border-accent text-foreground" : "border-transparent text-muted hover:text-foreground",
             )}
           >

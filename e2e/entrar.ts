@@ -36,9 +36,17 @@ function cookieDeSessao(perfil: Perfil) {
   return { name: `sb-${host}-auth-token`, value: `base64-${b64(JSON.stringify(sessao))}`, nome: usuario.nome };
 }
 
-/** Entra com o perfil e devolve a página e o nome que aparece nas telas para esse perfil. */
-export async function entrar(browser: Browser, perfil: Perfil, nomeDemo: string): Promise<{ pagina: Page; nome: string }> {
-  const contexto = await browser.newContext({ viewport: perfil === "Equipe" || perfil === "Gestor" ? DESKTOP : CELULAR });
+/**
+ * Entra com o perfil e devolve a página e o nome que aparece nas telas para esse perfil.
+ * Por padrão, equipe e gestor no desktop e aluno e monitor no celular.
+ */
+export async function entrar(
+  browser: Browser,
+  perfil: Perfil,
+  nomeDemo: string,
+  viewport = perfil === "Equipe" || perfil === "Gestor" ? DESKTOP : CELULAR,
+): Promise<{ pagina: Page; nome: string }> {
+  const contexto = await browser.newContext({ viewport });
   const pagina = await contexto.newPage();
 
   if (MODO_SUPABASE) {
