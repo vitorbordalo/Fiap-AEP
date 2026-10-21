@@ -5,6 +5,7 @@ import { periodoDoDia } from "@/lib/dominio/periodo";
 import { DIAS_PARA_AGUARDANDO_PADRAO } from "@/lib/dominio/status";
 import { dataIso } from "@/lib/formato";
 import type { Papel, Tables } from "@/lib/supabase/database.types";
+import { carregarRetrato, DEMO_COMPARTILHADA, guardarFoto, guardarRetrato } from "./demo-compartilhado";
 import {
   calcularDashboard,
   catalogoDe,
@@ -27,6 +28,7 @@ import { ErroDeNegocio, type MeuPedido, type Repositorio } from "./tipos";
 /**
  * Repositório em memória do modo demonstração. Começa com os dados do seed (scripts/seed/dados.mjs)
  * e aceita cadastros, pedidos e retiradas. Tudo volta ao início quando o servidor reinicia.
+ * Na Vercel, o retrato é compartilhado entre as funções pela Runtime Cache (demo-compartilhado.ts).
  * Repete as regras que o banco garante (uma retirada válida por item, pedido só de item disponível,
  * retirada só desfeita uma vez).
  */
@@ -95,11 +97,16 @@ function exigir<T extends { id: string }>(lista: T[], id: string, mensagem: stri
 }
 
 /** Perfil de teste usado pelo login de demonstração para cada papel; o nome digitado aparece nas telas. */
-export function perfilDeTeste(papel: Papel, nome: string): Tables<"profiles"> {
+export async function perfilDeTeste(papel: Papel, nome: string): Promise<Tables<"profiles">> {
+  if (DEMO_COMPARTILHADA) await carregarCompartilhado();
   const idDeTeste = usuariosTeste.find((u) => u.role === papel)?.id;
   const perfil = banco().perfis.find((p) => p.id === idDeTeste);
   if (!perfil) throw new Error(`Sem perfil de teste para ${papel}`);
-  if (nome && perfil.nome !== nome) perfil.nome = nome;
+  if (nome && perfil.nome !== nome) {
+    perfil.nome = nome;
+    // as outras telas (ex.: o pedido visto pela equipe) mostram o mesmo nome
+    if (DEMO_COMPARTILHADA) await guardarCompartilhado();
+  }
   return {
     id: perfil.id,
     email: perfil.email,
@@ -127,7 +134,7 @@ function meuPedido(p: PedidoLinha): MeuPedido {
   };
 }
 
-export const repositorioDemo: Repositorio = {
+const operacoes: Repositorio = {
   async catalogo() {
     return catalogoDe(banco());
   },
@@ -195,8 +202,9 @@ export const repositorioDemo: Repositorio = {
   // ---------------------------------------------------------------- cadastro
 
   async salvarFoto(_autorId, foto) {
-    // em memória: a própria imagem vira o "caminho"
-    return `data:${foto.type};base64,${Buffer.from(await foto.arrayBuffer()).toString("base64")}`;
+    // em memória: a própria imagem vira o "caminho"; na Vercel, ela fica guardada à parte
+    const dataUrl = `data:${foto.type};base64,${Buffer.from(await foto.arrayBuffer()).toString("base64")}`;
+    return DEMO_COMPARTILHADA ? guardarFoto(dataUrl) : dataUrl;
   },
 
   async cadastrarItem(autorId, novo) {
@@ -325,3 +333,44 @@ export const repositorioDemo: Repositorio = {
     });
   },
 };
+
+/** Operações que alteram os dados: na Vercel, o retrato é guardado de volta depois delas. */
+const ESCRITAS = new Set<string>([
+  "criarPedido",
+  "cadastrarItem",
+  "registrarRetirada",
+  "desfazerRetirada",
+  "atualizarDiasParaAguardando",
+  "alterarPessoa",
+  "definirPapelPorEmail",
+] satisfies (keyof Repositorio)[]);
+
+async function carregarCompartilhado() {
+  try {
+    global.__bancoDemo = (await carregarRetrato()) ?? banco();
+  } catch (erro) {
+    // sem o cache, a demonstração segue com a memória desta instância
+    console.error("Demonstração: não foi possível ler o retrato compartilhado.", erro);
+  }
+}
+
+async function guardarCompartilhado() {
+  await guardarRetrato(banco()).catch((erro) => console.error("Demonstração: não foi possível guardar o retrato.", erro));
+}
+
+async function comRetratoCompartilhado<T>(operacao: () => Promise<T>, escreve: boolean): Promise<T> {
+  await carregarCompartilhado();
+  const resultado = await operacao();
+  if (escreve) await guardarCompartilhado();
+  return resultado;
+}
+
+export const repositorioDemo: Repositorio = DEMO_COMPARTILHADA
+  ? (Object.fromEntries(
+      Object.entries(operacoes).map(([nome, operacao]) => [
+        nome,
+        (...args: unknown[]) =>
+          comRetratoCompartilhado(() => (operacao as (...a: unknown[]) => Promise<unknown>)(...args), ESCRITAS.has(nome)),
+      ]),
+    ) as Repositorio)
+  : operacoes;
