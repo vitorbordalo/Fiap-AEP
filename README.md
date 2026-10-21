@@ -35,7 +35,9 @@ npm install
 npm run dev
 ```
 
-Abra [localhost:3000/login](http://localhost:3000/login). Sem Supabase configurado, o app entra em **modo demonstração**: qualquer usuário e senha funcionam, você escolhe o perfil (Aluno, Monitor, Equipe ou Gestor), e os dados são fictícios, com um mês de histórico em memória. Cadastrar, pedir, registrar e desfazer retirada funcionam de verdade; tudo volta ao início quando o servidor reinicia.
+Abra [localhost:3000/login](http://localhost:3000/login). Sem Supabase configurado, o app entra em **modo demonstração**: qualquer usuário e senha funcionam, você escolhe o perfil (Aluno, Monitor, Equipe ou Gestor), e os dados são fictícios, com um mês de histórico em memória. Cadastrar, pedir, registrar e desfazer retirada funcionam de verdade; tudo volta ao início quando o servidor reinicia. O botão **"Demonstração"** no canto inferior esquerdo troca de perfil em um clique.
+
+**Para apresentar:** `npm run demo` (versão compilada, mais rápida) e o passo a passo em [docs/roteiro-da-apresentacao.md](docs/roteiro-da-apresentacao.md).
 
 ## Ligar ao Supabase
 
@@ -58,6 +60,7 @@ Sem as variáveis do Supabase, o deploy responde com uma mensagem de configuraç
 | Comando | Para quê |
 |---|---|
 | `npm run dev` | Servidor local |
+| `npm run demo` | Demonstração compilada, para apresentar (dados fictícios) |
 | `npm run build` / `npm start` | Build e servidor de produção |
 | `npm run lint` / `npm run typecheck` | Qualidade |
 | `npm test` | Unitários + RLS + seed (Postgres em memória) |

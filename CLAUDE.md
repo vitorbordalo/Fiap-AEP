@@ -22,6 +22,8 @@ Próximo passo: criar o projeto Supabase real (docs/supabase.md), testar o link 
 
 Liga sozinho quando `NEXT_PUBLIC_SUPABASE_URL` não está definido (sem `.env.local`). Serve para navegar por todas as telas localmente.
 
+- `npm run demo`: versão compilada da demonstração, para apresentar (roteiro em `docs/roteiro-da-apresentacao.md`).
+- Troca de perfil em um clique (`src/components/layout/troca-de-perfil.tsx` e menu do avatar), com as personas de `scripts/seed/usuarios-teste.json`. A câmera tem "Usar foto de exemplo", que vira a ilustração da categoria escolhida.
 - Login provisório em `/login` e `/monitor/login`: qualquer usuário e senha, com escolha do perfil. A senha nem é enviada ao servidor; o cookie `ap_sessao_demo` guarda só perfil e nome. Com o Supabase configurado, o login volta a ser o link mágico.
 - Dados: `src/lib/dados/demo.ts`, em memória, gerados por `scripts/seed/dados.mjs`. Cadastros, pedidos e retiradas funcionam e somem quando o servidor reinicia. Fotos novas ficam como data URL.
 - Em produção, a demonstração só liga com `NEXT_PUBLIC_MODO_DEMO=1`; sem isso e sem Supabase, o proxy responde 503 com instruções.
