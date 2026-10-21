@@ -283,7 +283,9 @@ export function filtrarItensEquipe(r: Retrato, filtro: FiltroItensEquipe, agora 
     // com pedido primeiro; depois, do mais antigo para o mais novo
     return itens.sort((a, z) => comPedidoPrimeiro(a, z) || a.encontradoEm.getTime() - z.encontradoEm.getTime());
   }
-  return itens.sort((a, z) => comPedidoPrimeiro(a, z) || z.encontradoEm.getTime() - a.encontradoEm.getTime());
+  return itens.sort(
+    (a, z) => comPedidoPrimeiro(a, z) || z.encontradoEm.getTime() - a.encontradoEm.getTime() || z.codigo.localeCompare(a.codigo),
+  );
 }
 
 export function resumirEquipe(r: Retrato, localId: string | null, agora = new Date()): ResumoEquipe {

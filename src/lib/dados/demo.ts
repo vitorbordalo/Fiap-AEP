@@ -142,7 +142,8 @@ export const repositorioDemo: Repositorio = {
       .filter((item) => !filtro.periodo || periodoDoDia(item.encontradoEm) === filtro.periodo)
       .filter((item) => !filtro.salaId || item.salaId === filtro.salaId)
       .filter((item) => !filtro.categoriaId || item.categoriaId === filtro.categoriaId)
-      .sort((a, z) => z.encontradoEm.getTime() - a.encontradoEm.getTime())
+      // mais recentes primeiro; no mesmo minuto, o cadastrado por último
+      .sort((a, z) => z.encontradoEm.getTime() - a.encontradoEm.getTime() || z.numero - a.numero)
       .map((item) => montarItemPublico(b, item));
   },
 

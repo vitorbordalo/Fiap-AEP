@@ -320,7 +320,13 @@ export function criarRepositorioSupabase({ cliente, admin }: Opcoes): Repositori
       const c = await cliente();
       const catalogo = await carregarCatalogo(c);
       const linhas = await todas("Buscar itens", (de, ate) => {
-        let q = c.from("itens_busca").select(COLUNAS_BUSCA).order("encontrado_em", { ascending: false }).range(de, ate);
+        // mais recentes primeiro; no mesmo minuto, o cadastrado por último
+        let q = c
+          .from("itens_busca")
+          .select(COLUNAS_BUSCA)
+          .order("encontrado_em", { ascending: false })
+          .order("numero", { ascending: false })
+          .range(de, ate);
         if (filtro.data) {
           q = q.gte("encontrado_em", `${filtro.data}T00:00:00-03:00`).lt("encontrado_em", `${diaSeguinte(filtro.data)}T00:00:00-03:00`);
         }

@@ -23,7 +23,8 @@ function Rotulo({ children, aside }: { children: React.ReactNode; aside?: string
 
 /** A2 · Formulário de busca. Envia por GET para /aluno/resultados (o link dos resultados pode ser compartilhado). */
 export function Busca({ catalogo, hojeIso }: BuscaProps) {
-  const [data, setData] = useState(hojeIso);
+  // vazio por padrão: com "hoje" preenchido, quem perdeu algo ontem não encontraria o item
+  const [data, setData] = useState("");
   const [periodo, setPeriodo] = useState<PeriodoDoDia | null>(null);
   const [sala, setSala] = useState("");
   const [categoria, setCategoria] = useState<string | null>(null);
@@ -38,7 +39,7 @@ export function Busca({ catalogo, hojeIso }: BuscaProps) {
   return (
     <form action="/aluno/resultados" method="get" className="flex flex-1 flex-col gap-6 px-5 pb-5">
       <section className="flex flex-col gap-3">
-        <Rotulo>Quando você perdeu?</Rotulo>
+        <Rotulo aside="Opcional">Quando você perdeu?</Rotulo>
         <Input
           label="Data"
           name="data"

@@ -231,6 +231,7 @@ export function gerarDadosDemo({ agora = new Date() } = {}) {
     item.linha.observacao = escolher(OBSERVACOES[nome]);
   };
   fixarCategoria(recebidos[0], "Fone");
+  // Documentos recebidos e aguardando: aparecem na busca do aluno, sempre sem foto (LGPD)
   fixarCategoria(recebidos[2], "Documento");
   fixarCategoria(aguardando[0], "Documento");
 
