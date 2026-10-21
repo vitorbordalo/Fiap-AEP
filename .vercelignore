@@ -1,0 +1,9 @@
+# o deploy pela CLI envia a pasta local: fica de fora o que não é código
+.env*
+!.env.example
+.claude
+.next*
+test-results
+playwright-report
+tsconfig.tsbuildinfo
+next-env.d.ts
