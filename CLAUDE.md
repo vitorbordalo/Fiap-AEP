@@ -27,7 +27,9 @@ Liga sozinho quando `NEXT_PUBLIC_SUPABASE_URL` não está definido (sem `.env.lo
 - Login provisório em `/login` e `/monitor/login`: qualquer usuário e senha, com escolha do perfil. A senha nem é enviada ao servidor; o cookie `ap_sessao_demo` guarda só perfil e nome. Com o Supabase configurado, o login volta a ser o link mágico.
 - Dados: `src/lib/dados/demo.ts`, em memória, gerados por `scripts/seed/dados.mjs`. Cadastros, pedidos e retiradas funcionam e somem quando o servidor reinicia. Fotos novas ficam como data URL.
 - Em produção, a demonstração só liga com `NEXT_PUBLIC_MODO_DEMO=1`; sem isso e sem Supabase, o proxy responde 503 com instruções.
-- Na Vercel (`VERCEL=1`), cada função tem a sua memória; por isso o retrato da demonstração fica na Runtime Cache (`src/lib/dados/demo-compartilhado.ts`), um por deploy, e as fotos em chaves à parte. Um deploy novo volta os dados ao início. Localmente nada disso liga.
+- Na Vercel (`VERCEL=1`), cada função tem a sua memória; por isso o retrato da demonstração fica na Runtime Cache (`src/lib/dados/demo-compartilhado.ts`), um por deploy, válido por uma semana, e as fotos em chaves à parte. Sem retrato guardado (deploy novo ou chave descartada pelo cache), a primeira chamada semeia e já guarda, para todas as instâncias lerem o mesmo. Um deploy novo volta os dados ao início. Localmente nada disso liga.
+- As operações da demonstração (`demo.ts`) recebem o retrato em que trabalham; quem carrega e guarda é a sessão (local ou compartilhada). Não volte a ler um retrato global dentro das operações: na Vercel, requisições simultâneas dividem a mesma instância.
+- `E2E_URL=<url> npx playwright test ...` roda os E2E contra um deploy publicado (`docs/testes.md`).
 - As telas só usam `dados()` de `src/lib/dados`, que devolve `repositorioDemo` ou o repositório Supabase (`supabase.ts`). Os dois cumprem o contrato `Repositorio` (`tipos.ts`) e usam a mesma montagem (`montagem.ts`): regra nova entra na montagem, não nas telas.
 
 ## Comandos

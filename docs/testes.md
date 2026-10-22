@@ -4,11 +4,21 @@ Cinco camadas, da mais rápida para a mais completa. Nenhuma precisa de Docker n
 
 | Comando | O que testa | Precisa de |
 |---|---|---|
-| `npm test` | Regras de negócio puras (status, conferência da retirada, datas no fuso de São Paulo, rotas por perfil, e-mail), **RLS** e seed num Postgres em memória (PGlite) | nada |
+| `npm test` | Regras de negócio puras (status, conferência da retirada, datas no fuso de São Paulo, rotas por perfil, e-mail), regras do repositório da demonstração e o retrato compartilhado da Vercel (com um cache em memória), **RLS** e seed num Postgres em memória (PGlite) | nada |
 | `npm run db:validar` | Aplica todas as migrations num Postgres em memória | nada |
 | `npm run test:integracao` | O repositório Supabase (`src/lib/dados/supabase.ts`) pelo `supabase-js`, contra **Postgres 17 + PostgREST reais**, com o JWT de cada perfil | binários (abaixo) |
 | `npm run test:e2e` | Playwright no app em **modo demonstração**: fluxo completo, todas as telas de cada perfil, LGPD, bloqueio de áreas e acessibilidade (axe, WCAG 2.1 AA) | um navegador |
 | `npm run test:e2e:supabase` | Os mesmos testes do Playwright com o app em **modo Supabase**: banco real, seed real, RLS e upload de foto | binários + navegador |
+
+## Testar um deploy publicado
+
+Com `E2E_URL`, o Playwright não sobe o app: roda contra a URL. Serve para conferir a demonstração na Vercel antes de apresentar.
+
+```bash
+E2E_URL=https://achados-e-perdidos-fiap.vercel.app PW_CHANNEL=msedge npx playwright test e2e/roteiro.spec.ts e2e/celular.spec.ts
+```
+
+Os testes cadastram itens, pedidos e retiradas de verdade na demonstração publicada. Para voltar aos dados iniciais, faça um deploy novo (o retrato é um por deploy).
 
 ## Navegador do Playwright
 

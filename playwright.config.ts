@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORTA = Number(process.env.E2E_PORTA ?? 3200);
+// E2E_URL testa um deploy já publicado (ex.: a demonstração na Vercel) em vez de subir o app aqui
+const URL_EXTERNA = process.env.E2E_URL?.replace(/\/$/, "");
 
 /**
  * Fluxos ponta a ponta. Por padrão sobe o app em modo demonstração (sem .env.local).
@@ -15,15 +17,15 @@ export default defineConfig({
   reporter: [["list"]],
   timeout: 60_000,
   use: {
-    baseURL: `http://localhost:${PORTA}`,
+    baseURL: URL_EXTERNA ?? `http://localhost:${PORTA}`,
     channel: process.env.PW_CHANNEL || undefined,
     locale: "pt-BR",
     timezoneId: "America/Sao_Paulo",
     trace: "retain-on-failure",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], channel: process.env.PW_CHANNEL || undefined } }],
-  // no modo Supabase quem sobe o app é scripts/e2e-supabase.mjs
-  webServer: process.env.E2E_MODO === "supabase" ? undefined : {
+  // no modo Supabase quem sobe o app é scripts/e2e-supabase.mjs; com E2E_URL o app já está no ar
+  webServer: process.env.E2E_MODO === "supabase" || URL_EXTERNA ? undefined : {
     command: `npm run build && npx next start -p ${PORTA}`,
     url: `http://localhost:${PORTA}/login`,
     timeout: 240_000,
