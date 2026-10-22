@@ -309,7 +309,8 @@ export function criarRepositorioSupabase({ cliente, admin }: Opcoes): Repositori
     }));
   }
 
-  return {
+  // chamadas entre operações vão pelo nome, não por `this`: funciona mesmo se alguém desestruturar dados()
+  const repositorio: Repositorio = {
     async catalogo() {
       return carregarCatalogo(await cliente());
     },
@@ -373,7 +374,7 @@ export function criarRepositorioSupabase({ cliente, admin }: Opcoes): Repositori
       if (!error) return { id: data.id };
       // já pediu este item: devolve o pedido existente
       if (error.code === "23505") {
-        const existente = await this.pedidoDoAluno(alunoId, novo.itemId);
+        const existente = await repositorio.pedidoDoAluno(alunoId, novo.itemId);
         if (existente) return { id: existente };
       }
       // a policy recusa pedido de item já retirado
@@ -545,7 +546,8 @@ export function criarRepositorioSupabase({ cliente, admin }: Opcoes): Repositori
         if (erroCriacao || !criado.user) falhar("Criar conta", erroCriacao ?? { message: "sem usuário" });
         id = criado.user.id;
       }
-      await this.alterarPessoa(id, papel, localId);
+      await repositorio.alterarPessoa(id, papel, localId);
     },
   };
+  return repositorio;
 }
