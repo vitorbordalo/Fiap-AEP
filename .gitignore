@@ -18,9 +18,8 @@ playwright-report/
 playwright/.cache/
 
 # ambiente (nunca commitar segredos)
-.env
-.env.local
-.env.*.local
+.env*
+!.env.example
 
 # supabase cli
 supabase/.branches/
@@ -33,3 +32,6 @@ Thumbs.db
 
 # configurações locais do Claude Code
 .claude/settings.local.json
+
+# vercel cli (vercel link / deploy)
+.vercel
