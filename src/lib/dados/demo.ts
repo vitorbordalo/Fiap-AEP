@@ -5,7 +5,7 @@ import { periodoDoDia } from "@/lib/dominio/periodo";
 import { DIAS_PARA_AGUARDANDO_PADRAO } from "@/lib/dominio/status";
 import { dataIso } from "@/lib/formato";
 import type { Papel, Tables } from "@/lib/supabase/database.types";
-import { carregarRetrato, DEMO_COMPARTILHADA, guardarFoto, guardarRetrato } from "./demo-compartilhado";
+import { abrirRetrato, DEMO_COMPARTILHADA, guardarFoto, guardarRetrato, type Armazenamento } from "./demo-compartilhado";
 import {
   calcularDashboard,
   catalogoDe,
@@ -16,8 +16,8 @@ import {
   montarDetalhe,
   montarItemEquipe,
   montarItemPublico,
-  resumirEquipe,
   retiradaValida,
+  resumirEquipe,
   type ItemLinha,
   type PedidoLinha,
   type Retrato,
@@ -31,10 +31,13 @@ import { ErroDeNegocio, type MeuPedido, type Repositorio } from "./tipos";
  * Na Vercel, o retrato é compartilhado entre as funções pela Runtime Cache (demo-compartilhado.ts).
  * Repete as regras que o banco garante (uma retirada válida por item, pedido só de item disponível,
  * retirada só desfeita uma vez).
+ *
+ * Cada operação recebe o retrato em que trabalha: localmente é sempre o mesmo (memória do processo);
+ * na Vercel, cada chamada lê o seu, e requisições simultâneas na mesma instância não se atropelam.
  */
 
-function criarBanco(): Retrato {
-  const d = gerarDadosDemo();
+export function criarRetratoInicial(agora = new Date()): Retrato {
+  const d = gerarDadosDemo({ agora });
   return {
     categorias: d.categorias.map((c) => ({ id: c.id, nome: c.nome, icone: c.icone, cor: c.cor, fotoSensivel: c.foto_sensivel })),
     salas: d.salas.map(({ id, nome }) => ({ id, nome })),
@@ -78,49 +81,13 @@ function criarBanco(): Retrato {
   };
 }
 
-// guardado no globalThis para sobreviver ao hot reload do `next dev`
-const global = globalThis as typeof globalThis & { __bancoDemo?: Retrato };
-function banco(): Retrato {
-  global.__bancoDemo ??= criarBanco();
-  return global.__bancoDemo;
-}
-
-/** Volta os dados ao estado inicial (usado pelos testes). */
-export function reiniciarDemo() {
-  global.__bancoDemo = criarBanco();
-}
-
 function exigir<T extends { id: string }>(lista: T[], id: string, mensagem: string) {
   const achado = lista.find((x) => x.id === id);
   if (!achado) throw new ErroDeNegocio(mensagem);
   return achado;
 }
 
-/** Perfil de teste usado pelo login de demonstração para cada papel; o nome digitado aparece nas telas. */
-export async function perfilDeTeste(papel: Papel, nome: string): Promise<Tables<"profiles">> {
-  if (DEMO_COMPARTILHADA) await carregarCompartilhado();
-  const idDeTeste = usuariosTeste.find((u) => u.role === papel)?.id;
-  const perfil = banco().perfis.find((p) => p.id === idDeTeste);
-  if (!perfil) throw new Error(`Sem perfil de teste para ${papel}`);
-  if (nome && perfil.nome !== nome) {
-    perfil.nome = nome;
-    // as outras telas (ex.: o pedido visto pela equipe) mostram o mesmo nome
-    if (DEMO_COMPARTILHADA) await guardarCompartilhado();
-  }
-  return {
-    id: perfil.id,
-    email: perfil.email,
-    nome: perfil.nome,
-    rm: perfil.rm,
-    // o cookie da sessão manda no papel: evita loop de redirecionamento se o gestor mudar o perfil em G3
-    role: papel,
-    local_id: perfil.localId,
-    created_at: new Date(0).toISOString(),
-  };
-}
-
-function meuPedido(p: PedidoLinha): MeuPedido {
-  const b = banco();
+function meuPedido(b: Retrato, p: PedidoLinha): MeuPedido {
   const item = exigir(b.itens, p.itemId, "Item não encontrado.");
   const retirada = retiradaValida(b, p.itemId);
   return {
@@ -134,15 +101,30 @@ function meuPedido(p: PedidoLinha): MeuPedido {
   };
 }
 
-const operacoes: Repositorio = {
-  async catalogo() {
-    return catalogoDe(banco());
+/** Cada operação do contrato Repositorio, com o retrato em que ela trabalha como primeiro argumento. */
+type Operacoes = {
+  [Nome in keyof Repositorio]: (b: Retrato, ...args: Parameters<Repositorio[Nome]>) => ReturnType<Repositorio[Nome]>;
+};
+
+/** Operações que alteram os dados: na Vercel, o retrato é guardado de volta depois delas. */
+const ESCRITAS = new Set<keyof Repositorio>([
+  "criarPedido",
+  "cadastrarItem",
+  "registrarRetirada",
+  "desfazerRetirada",
+  "atualizarDiasParaAguardando",
+  "alterarPessoa",
+  "definirPapelPorEmail",
+]);
+
+const operacoes: Operacoes = {
+  async catalogo(b) {
+    return catalogoDe(b);
   },
 
   // ---------------------------------------------------------------- aluno
 
-  async buscarItensPublicos(filtro) {
-    const b = banco();
+  async buscarItensPublicos(b, filtro) {
     return b.itens
       .filter((item) => !retiradaValida(b, item.id))
       .filter((item) => !filtro.data || dataIso(item.encontradoEm) === filtro.data)
@@ -154,19 +136,17 @@ const operacoes: Repositorio = {
       .map((item) => montarItemPublico(b, item));
   },
 
-  async obterItemPublico(id) {
-    const b = banco();
+  async obterItemPublico(b, id) {
     const item = b.itens.find((i) => i.id === id);
     if (!item || retiradaValida(b, item.id)) return null;
     return montarItemPublico(b, item);
   },
 
-  async pedidoDoAluno(alunoId, itemId) {
-    return banco().pedidos.find((p) => p.alunoId === alunoId && p.itemId === itemId)?.id ?? null;
+  async pedidoDoAluno(b, alunoId, itemId) {
+    return b.pedidos.find((p) => p.alunoId === alunoId && p.itemId === itemId)?.id ?? null;
   },
 
-  async criarPedido(alunoId, novo) {
-    const b = banco();
+  async criarPedido(b, alunoId, novo) {
     const item = b.itens.find((i) => i.id === novo.itemId);
     if (!item || retiradaValida(b, item.id)) throw new ErroDeNegocio("Este item não está mais disponível.");
     const existente = b.pedidos.find((p) => p.alunoId === alunoId && p.itemId === novo.itemId);
@@ -187,28 +167,27 @@ const operacoes: Repositorio = {
     return { id: pedido.id };
   },
 
-  async listarMeusPedidos(alunoId) {
-    return banco()
-      .pedidos.filter((p) => p.alunoId === alunoId)
+  async listarMeusPedidos(b, alunoId) {
+    return b.pedidos
+      .filter((p) => p.alunoId === alunoId)
       .sort((a, z) => z.criadoEm.getTime() - a.criadoEm.getTime())
-      .map(meuPedido);
+      .map((p) => meuPedido(b, p));
   },
 
-  async obterMeuPedido(alunoId, pedidoId) {
-    const pedido = banco().pedidos.find((p) => p.id === pedidoId && p.alunoId === alunoId);
-    return pedido ? meuPedido(pedido) : null;
+  async obterMeuPedido(b, alunoId, pedidoId) {
+    const pedido = b.pedidos.find((p) => p.id === pedidoId && p.alunoId === alunoId);
+    return pedido ? meuPedido(b, pedido) : null;
   },
 
   // ---------------------------------------------------------------- cadastro
 
-  async salvarFoto(_autorId, foto) {
+  async salvarFoto(_b, _autorId, foto) {
     // em memória: a própria imagem vira o "caminho"; na Vercel, ela fica guardada à parte
     const dataUrl = `data:${foto.type};base64,${Buffer.from(await foto.arrayBuffer()).toString("base64")}`;
     return DEMO_COMPARTILHADA ? guardarFoto(dataUrl) : dataUrl;
   },
 
-  async cadastrarItem(autorId, novo) {
-    const b = banco();
+  async cadastrarItem(b, autorId, novo) {
     exigir(b.categorias, novo.categoriaId, "Categoria inválida.");
     exigir(b.salas, novo.salaId, "Sala inválida.");
     exigir(b.locais, novo.localId, "Local inválido.");
@@ -237,8 +216,7 @@ const operacoes: Repositorio = {
     return { id: item.id, codigo: codigoDoNumero(numero) };
   },
 
-  async obterItemCadastrado(autorId, id) {
-    const b = banco();
+  async obterItemCadastrado(b, autorId, id) {
     // o monitor só vê os itens que ele mesmo cadastrou (igual à policy do banco)
     const item = b.itens.find((i) => i.id === id && i.cadastradoPor === autorId);
     return item ? montarItemEquipe(b, item) : null;
@@ -246,22 +224,20 @@ const operacoes: Repositorio = {
 
   // ---------------------------------------------------------------- equipe
 
-  async listarItensEquipe(filtro) {
-    return filtrarItensEquipe(banco(), filtro);
+  async listarItensEquipe(b, filtro) {
+    return filtrarItensEquipe(b, filtro);
   },
 
-  async resumoEquipe(localId) {
-    return resumirEquipe(banco(), localId);
+  async resumoEquipe(b, localId) {
+    return resumirEquipe(b, localId);
   },
 
-  async obterItemDetalhe(id) {
-    const b = banco();
+  async obterItemDetalhe(b, id) {
     const item = b.itens.find((i) => i.id === id);
     return item ? montarDetalhe(b, item) : null;
   },
 
-  async registrarRetirada(equipeId, nova) {
-    const b = banco();
+  async registrarRetirada(b, equipeId, nova) {
     const item = exigir(b.itens, nova.itemId, "Item não encontrado.");
     if (retiradaValida(b, item.id)) throw new ErroDeNegocio("Este item já foi retirado.");
     if (nova.pedidoId && !b.pedidos.some((p) => p.id === nova.pedidoId && p.itemId === item.id)) {
@@ -282,8 +258,8 @@ const operacoes: Repositorio = {
     return { id: retirada.id };
   },
 
-  async desfazerRetirada(equipeId, retiradaId) {
-    const retirada = exigir(banco().retiradas, retiradaId, "Retirada não encontrada.");
+  async desfazerRetirada(b, equipeId, retiradaId) {
+    const retirada = exigir(b.retiradas, retiradaId, "Retirada não encontrada.");
     if (retirada.desfeitaEm) throw new ErroDeNegocio("Esta retirada já foi desfeita.");
     retirada.desfeitaEm = new Date();
     retirada.desfeitaPor = equipeId;
@@ -292,30 +268,29 @@ const operacoes: Repositorio = {
 
   // ---------------------------------------------------------------- gestor
 
-  async dashboard(localId, periodo) {
-    return calcularDashboard(banco(), localId, periodo);
+  async dashboard(b, localId, periodo) {
+    return calcularDashboard(b, localId, periodo);
   },
 
-  async historico(filtro) {
-    return filtrarHistorico(banco(), filtro);
+  async historico(b, filtro) {
+    return filtrarHistorico(b, filtro);
   },
 
-  async configuracoes() {
-    return montarConfiguracoes(banco());
+  async configuracoes(b) {
+    return montarConfiguracoes(b);
   },
 
-  async atualizarDiasParaAguardando(dias) {
-    banco().diasParaAguardando = dias;
+  async atualizarDiasParaAguardando(b, dias) {
+    b.diasParaAguardando = dias;
   },
 
-  async alterarPessoa(id, papel, localId) {
-    const perfil = exigir(banco().perfis, id, "Pessoa não encontrada.");
+  async alterarPessoa(b, id, papel, localId) {
+    const perfil = exigir(b.perfis, id, "Pessoa não encontrada.");
     perfil.papel = papel;
     perfil.localId = papel === "equipe" ? localId : null;
   },
 
-  async definirPapelPorEmail(email, papel, localId) {
-    const b = banco();
+  async definirPapelPorEmail(b, email, papel, localId) {
     const existente = b.perfis.find((p) => p.email === email);
     if (existente) {
       existente.papel = papel;
@@ -334,43 +309,93 @@ const operacoes: Repositorio = {
   },
 };
 
-/** Operações que alteram os dados: na Vercel, o retrato é guardado de volta depois delas. */
-const ESCRITAS = new Set<string>([
-  "criarPedido",
-  "cadastrarItem",
-  "registrarRetirada",
-  "desfazerRetirada",
-  "atualizarDiasParaAguardando",
-  "alterarPessoa",
-  "definirPapelPorEmail",
-] satisfies (keyof Repositorio)[]);
+// ---------------------------------------------------------------------------
+// Onde o retrato mora
+// ---------------------------------------------------------------------------
 
-async function carregarCompartilhado() {
-  try {
-    global.__bancoDemo = (await carregarRetrato()) ?? banco();
-  } catch (erro) {
-    // sem o cache, a demonstração segue com a memória desta instância
-    console.error("Demonstração: não foi possível ler o retrato compartilhado.", erro);
+/** Dá a cada operação o retrato em que trabalhar e guarda as alterações depois dela. */
+export type Sessao = <T>(operacao: (b: Retrato) => Promise<T>, escreve: boolean) => Promise<T>;
+
+/** Liga as operações a uma sessão: o resultado cumpre o contrato Repositorio. */
+export function criarRepositorioDemo(sessao: Sessao): Repositorio {
+  return Object.fromEntries(
+    Object.entries(operacoes).map(([nome, operacao]) => [
+      nome,
+      (...args: unknown[]) =>
+        sessao((b) => (operacao as (b: Retrato, ...a: unknown[]) => Promise<unknown>)(b, ...args), ESCRITAS.has(nome as keyof Repositorio)),
+    ]),
+  ) as Repositorio;
+}
+
+// guardado no globalThis para sobreviver ao hot reload do `next dev`
+const global = globalThis as typeof globalThis & { __bancoDemo?: Retrato };
+function retratoLocal(): Retrato {
+  global.__bancoDemo ??= criarRetratoInicial();
+  return global.__bancoDemo;
+}
+
+/** Volta os dados ao estado inicial (usado pelos testes). */
+export function reiniciarDemo() {
+  global.__bancoDemo = criarRetratoInicial();
+}
+
+/** Local: a memória do processo, sempre o mesmo retrato. */
+const sessaoLocal: Sessao = (operacao) => operacao(retratoLocal());
+
+/**
+ * Vercel: cada chamada lê o retrato compartilhado (ou o semeia) e, se alterou algo, guarda de volta.
+ * Se a Runtime Cache falhar, a demonstração segue com o último retrato que esta instância viu.
+ * Sem `cache`, usa a Runtime Cache; os testes passam um armazenamento em memória.
+ */
+export function criarSessaoCompartilhada(cache?: Armazenamento): Sessao {
+  return async (operacao, escreve) => {
+    let b: Retrato;
+    try {
+      b = await abrirRetrato(() => criarRetratoInicial(), cache);
+      global.__bancoDemo = b;
+    } catch (erro) {
+      console.error("Demonstração: não foi possível ler o retrato compartilhado.", erro);
+      b = retratoLocal();
+    }
+    const resultado = await operacao(b);
+    if (escreve) {
+      await guardarRetrato(b, cache).catch((erro) => console.error("Demonstração: não foi possível guardar o retrato.", erro));
+    }
+    return resultado;
+  };
+}
+
+const sessao = DEMO_COMPARTILHADA ? criarSessaoCompartilhada() : sessaoLocal;
+
+export const repositorioDemo: Repositorio = criarRepositorioDemo(sessao);
+
+/** Perfil de teste usado pelo login de demonstração para cada papel; o nome digitado aparece nas telas. */
+export async function perfilDeTeste(papel: Papel, nome: string): Promise<Tables<"profiles">> {
+  const idDeTeste = usuariosTeste.find((u) => u.role === papel)?.id;
+  const procurar = (b: Retrato) => {
+    const perfil = b.perfis.find((p) => p.id === idDeTeste);
+    if (!perfil) throw new Error(`Sem perfil de teste para ${papel}`);
+    return perfil;
+  };
+
+  let perfil = await sessao(async (b) => ({ ...procurar(b) }), false);
+  if (nome && perfil.nome !== nome) {
+    // as outras telas (ex.: o pedido visto pela equipe) mostram o mesmo nome
+    perfil = await sessao(async (b) => {
+      const doRetrato = procurar(b);
+      doRetrato.nome = nome;
+      return { ...doRetrato };
+    }, true);
   }
-}
 
-async function guardarCompartilhado() {
-  await guardarRetrato(banco()).catch((erro) => console.error("Demonstração: não foi possível guardar o retrato.", erro));
+  return {
+    id: perfil.id,
+    email: perfil.email,
+    nome: perfil.nome,
+    rm: perfil.rm,
+    // o cookie da sessão manda no papel: evita loop de redirecionamento se o gestor mudar o perfil em G3
+    role: papel,
+    local_id: perfil.localId,
+    created_at: new Date(0).toISOString(),
+  };
 }
-
-async function comRetratoCompartilhado<T>(operacao: () => Promise<T>, escreve: boolean): Promise<T> {
-  await carregarCompartilhado();
-  const resultado = await operacao();
-  if (escreve) await guardarCompartilhado();
-  return resultado;
-}
-
-export const repositorioDemo: Repositorio = DEMO_COMPARTILHADA
-  ? (Object.fromEntries(
-      Object.entries(operacoes).map(([nome, operacao]) => [
-        nome,
-        (...args: unknown[]) =>
-          comRetratoCompartilhado(() => (operacao as (...a: unknown[]) => Promise<unknown>)(...args), ESCRITAS.has(nome)),
-      ]),
-    ) as Repositorio)
-  : operacoes;
