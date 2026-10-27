@@ -369,29 +369,35 @@ const sessao = DEMO_COMPARTILHADA ? criarSessaoCompartilhada() : sessaoLocal;
 
 export const repositorioDemo: Repositorio = criarRepositorioDemo(sessao);
 
-/** Perfil de teste usado pelo login de demonstração para cada papel; o nome digitado aparece nas telas. */
-export async function perfilDeTeste(papel: Papel, nome: string): Promise<Tables<"profiles">> {
+function procurarPerfilDeTeste(b: Retrato, papel: Papel) {
   const idDeTeste = usuariosTeste.find((u) => u.role === papel)?.id;
-  const procurar = (b: Retrato) => {
-    const perfil = b.perfis.find((p) => p.id === idDeTeste);
-    if (!perfil) throw new Error(`Sem perfil de teste para ${papel}`);
-    return perfil;
-  };
+  const perfil = b.perfis.find((p) => p.id === idDeTeste);
+  if (!perfil) throw new Error(`Sem perfil de teste para ${papel}`);
+  return perfil;
+}
 
-  let perfil = await sessao(async (b) => ({ ...procurar(b) }), false);
-  if (nome && perfil.nome !== nome) {
-    // as outras telas (ex.: o pedido visto pela equipe) mostram o mesmo nome
-    perfil = await sessao(async (b) => {
-      const doRetrato = procurar(b);
-      doRetrato.nome = nome;
-      return { ...doRetrato };
-    }, true);
-  }
+/**
+ * Grava o nome digitado no login no perfil de teste, para as outras telas (ex.: o pedido visto pela
+ * equipe) mostrarem o mesmo nome. Só no login e na troca de perfil, nunca a cada página: na Vercel,
+ * cada gravação reescreve o retrato inteiro, e duas pessoas no mesmo perfil com nomes diferentes
+ * regravariam a cada clique, atropelando um cadastro feito ao mesmo tempo.
+ */
+export async function renomearPerfilDeTeste(papel: Papel, nome: string) {
+  const atual = await sessao(async (b) => procurarPerfilDeTeste(b, papel).nome, false);
+  if (!nome || atual === nome) return;
+  await sessao(async (b) => {
+    procurarPerfilDeTeste(b, papel).nome = nome;
+  }, true);
+}
+
+/** Perfil de teste usado pelo login de demonstração para cada papel; o nome do cookie aparece nas telas. */
+export async function perfilDeTeste(papel: Papel, nome: string): Promise<Tables<"profiles">> {
+  const perfil = await sessao(async (b) => ({ ...procurarPerfilDeTeste(b, papel) }), false);
 
   return {
     id: perfil.id,
     email: perfil.email,
-    nome: perfil.nome,
+    nome: nome || perfil.nome,
     rm: perfil.rm,
     // o cookie da sessão manda no papel: evita loop de redirecionamento se o gestor mudar o perfil em G3
     role: papel,
