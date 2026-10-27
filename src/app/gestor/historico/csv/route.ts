@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   if (perfil?.role !== "gestor") return new Response("Sem permissão.", { status: 403 });
 
   const catalogo = await dados().catalogo();
-  const filtro = lerFiltrosHistorico(request.nextUrl.searchParams, catalogo, await localDaVisao(perfil));
+  const filtro = lerFiltrosHistorico(request.nextUrl.searchParams, catalogo, await localDaVisao());
   const linhas = await dados().historico(filtro);
 
   const cabecalho = ["Código", "Categoria", "Retirado por", "RM", "Data e hora", "Local", "Registrado por", "Carteirinha", "Situação"];

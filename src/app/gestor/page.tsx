@@ -60,10 +60,10 @@ function variacao(atual: number, anterior: number, opcoes: { menorEhMelhor?: boo
 
 /** G1 · Dashboard da coordenação. */
 export default async function GestorDashboardPage({ searchParams }: PageProps<"/gestor">) {
-  const perfil = await exigirPapel("gestor");
+  await exigirPapel("gestor");
   const { periodo: periodoParam } = await searchParams;
   const periodo: PeriodoRelatorio = PERIODOS.some((p) => p.valor === periodoParam) ? (periodoParam as PeriodoRelatorio) : "30d";
-  const localId = await localDaVisao(perfil);
+  const localId = await localDaVisao();
   const [painel, catalogo] = await Promise.all([dados().dashboard(localId, periodo), dados().catalogo()]);
   const { kpis } = painel;
 

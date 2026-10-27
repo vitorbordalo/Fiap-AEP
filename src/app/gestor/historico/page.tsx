@@ -19,10 +19,10 @@ const seletor =
 
 /** G2 · Histórico de retiradas (auditoria), com exportação CSV do mesmo recorte. */
 export default async function GestorHistoricoPage({ searchParams }: PageProps<"/gestor/historico">) {
-  const perfil = await exigirPapel("gestor");
+  await exigirPapel("gestor");
   const params = await searchParams;
   const catalogo = await dados().catalogo();
-  const filtro = lerFiltrosHistorico(params, catalogo, await localDaVisao(perfil));
+  const filtro = lerFiltrosHistorico(params, catalogo, await localDaVisao());
   const linhas = await dados().historico(filtro);
 
   const query = new URLSearchParams();

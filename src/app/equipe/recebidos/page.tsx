@@ -8,10 +8,10 @@ export const metadata: Metadata = { title: "Recebidos" };
 
 /** E2 · Recebidos */
 export default async function Page({ searchParams }: PageProps<"/equipe/recebidos">) {
-  const perfil = await exigirPapel("equipe");
+  await exigirPapel("equipe");
   return (
     <ConteudoDesktop>
-      <ListaDeItens status="recebido" localId={await localDaVisao(perfil)} params={await searchParams} />
+      <ListaDeItens status="recebido" localId={await localDaVisao()} params={await searchParams} />
     </ConteudoDesktop>
   );
 }

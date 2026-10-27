@@ -48,10 +48,10 @@ export async function ConteudoRetirada({ id, pedido, modo }: { id: string; pedid
 
 /** Carrega e monta o E6. O local sugerido é o que a equipe está vendo; em "todos", segue o horário. */
 export async function ConteudoNovoItem({ modo }: { modo: "modal" | "pagina" }) {
-  const perfil = await exigirPapel("equipe");
+  await exigirPapel("equipe");
   const catalogo = await dados().catalogo();
   const agora = new Date();
-  const localDaTela = await localDaVisao(perfil);
+  const localDaTela = await localDaVisao();
 
   return (
     <NovoItem

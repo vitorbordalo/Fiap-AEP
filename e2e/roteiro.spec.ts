@@ -53,7 +53,7 @@ test("roteiro da apresentação, do monitor ao gestor", async ({ page: p }) => {
 
   // 4. Equipe
   await trocarPara(p, "Equipe", /\/equipe$/);
-  await p.getByLabel("Local exibido").selectOption({ label: "Todos os locais" });
+  await expect(p.getByLabel("Local exibido")).toHaveValue("todos");
   const pedido = p.getByRole("listitem").filter({ hasText: protocolo });
   await expect(pedido).toContainText("Mariana Costa");
   await pedido.getByRole("link", { name: "Registrar retirada" }).click();

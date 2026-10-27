@@ -74,7 +74,8 @@ test("do cadastro pelo monitor até a retirada pela equipe", async ({ browser })
 
   // 3. Equipe vê o pedido, confere e registra a retirada
   const { pagina: equipe } = await entrar(browser, "Equipe", "Equipe E2E");
-  await equipe.getByLabel("Local exibido").selectOption({ label: "Todos os locais" });
+  // a equipe começa em "Todos os locais": o item guardado em qualquer local aparece sem trocar nada
+  await expect(equipe.getByLabel("Local exibido")).toHaveValue("todos");
   await equipe.waitForLoadState("networkidle");
   const linhaDoPedido = equipe.getByRole("listitem").filter({ hasText: protocolo as string });
   await expect(linhaDoPedido).toContainText(nomeAluno);
@@ -100,6 +101,28 @@ test("do cadastro pelo monitor até a retirada pela equipe", async ({ browser })
   await expect(equipe.getByText(`Retirado por ${nomeAluno}`).first()).toBeVisible();
   await expect(equipe.getByText(`Pedido de ${nomeAluno}`).first()).toBeVisible();
   await expect(equipe.getByText("Carteirinha conferida")).toBeVisible();
+});
+
+test("item cadastrado pelo monitor aparece para a equipe em qualquer local de guarda", async ({ browser }) => {
+  const { pagina: monitor } = await entrar(browser, "Monitor", "Monitor Locais");
+  const { pagina: equipe } = await entrar(browser, "Equipe", "Equipe Locais");
+
+  for (const local of ["Achados e Perdidos", "Sala de TI"]) {
+    const observacao = `Garrafa ${local} ${Date.now()}`;
+    await monitor.goto("/monitor");
+    await monitor.locator("input[type=file]:not([capture])").setInputFiles({ name: "foto.png", mimeType: "image/png", buffer: pngDeTeste() });
+    await monitor.waitForURL(/\/monitor\/novo$/);
+    await monitor.getByRole("radio", { name: "Garrafa" }).click();
+    await monitor.getByLabel("Sala", { exact: true }).selectOption({ label: "Sala 304" });
+    await monitor.locator("label").filter({ hasText: local }).click();
+    await monitor.getByLabel("Observação (opcional)").fill(observacao);
+    await monitor.getByRole("button", { name: "Cadastrar item" }).click();
+    await monitor.waitForURL(/\/monitor\/novo\/sucesso/);
+    const protocolo = (await monitor.getByText(/#AP-\d{4}/).first().textContent())?.match(/#AP-\d{4}/)?.[0] as string;
+
+    await equipe.goto("/equipe/recebidos");
+    await expect(equipe.getByRole("article").filter({ hasText: protocolo })).toBeVisible();
+  }
 });
 
 test("documento nunca mostra foto para o aluno", async ({ browser }) => {

@@ -16,8 +16,8 @@ export const metadata: Metadata = { title: "Itens" };
 
 /** E1 · Início da equipe: os três status, a busca geral e os pedidos de retirada abertos. */
 export default async function EquipeInicioPage({ searchParams }: PageProps<"/equipe">) {
-  const perfil = await exigirPapel("equipe");
-  const localId = await localDaVisao(perfil);
+  await exigirPapel("equipe");
+  const localId = await localDaVisao();
   const { busca } = await searchParams;
   const termo = typeof busca === "string" ? busca.trim() : "";
 

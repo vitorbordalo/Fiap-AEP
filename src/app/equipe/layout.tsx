@@ -9,7 +9,7 @@ import { dados } from "@/lib/dados";
 export default async function EquipeLayout({ children, modal }: LayoutProps<"/equipe">) {
   const perfil = await exigirPapel("equipe");
   const { locais } = await dados().catalogo();
-  const localAtual = await localDaVisao(perfil);
+  const localAtual = await localDaVisao();
   const meuLocal = locais.find((l) => l.id === perfil.local_id);
 
   return (

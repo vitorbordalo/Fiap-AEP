@@ -38,7 +38,7 @@
 
 ## 4. Equipe: registrar quem retirou (2 min)
 
-1. **Demonstração → Equipe.** Você é a Ana Souza. No topo, troque o local para **Todos os locais**.
+1. **Demonstração → Equipe.** Você é a Ana Souza. A visão já começa em **Todos os locais**: o item que o monitor acabou de cadastrar aparece, qualquer que seja o local de guarda. O seletor no topo filtra por local, se quiser mostrar.
 2. Em **Pedidos de retirada**, o pedido da Mariana aparece. Clique em **Registrar retirada**.
 3. Mostre a **conferência**: sala, turma e horário com ✓ verde quando batem com o cadastro.
 4. Marque **Conferi a carteirinha do aluno** (sem isso, o botão não libera) e **Confirmar retirada**. Aparece o aviso com **Desfazer**.

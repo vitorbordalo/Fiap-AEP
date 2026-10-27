@@ -8,10 +8,10 @@ export const metadata: Metadata = { title: "Retirados" };
 
 /** E4 · Retirados */
 export default async function Page({ searchParams }: PageProps<"/equipe/retirados">) {
-  const perfil = await exigirPapel("equipe");
+  await exigirPapel("equipe");
   return (
     <ConteudoDesktop>
-      <ListaDeItens status="retirado" localId={await localDaVisao(perfil)} params={await searchParams} />
+      <ListaDeItens status="retirado" localId={await localDaVisao()} params={await searchParams} />
     </ConteudoDesktop>
   );
 }

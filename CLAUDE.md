@@ -150,7 +150,7 @@ Pastas do Stitch: `m1_login_do_monitor`, `m2_novo_item_c_mera`, `m3_detalhes_do_
 - Categoria sensível (Documento) nunca mostra foto a alunos: placeholder "Foto oculta · documento".
 - Alunos nunca veem dados de outros alunos (pedidos, retiradas, RMs). Histórico de retiradas só para equipe e gestor.
 
-**Perfis:** todo usuário novo entra como aluno. O gestor define monitor, equipe e gestor (G3). Cada pessoa da equipe tem um local padrão; o seletor no topo troca a visão (sem alterar o perfil).
+**Perfis:** todo usuário novo entra como aluno. O gestor define monitor, equipe e gestor (G3). Cada pessoa da equipe tem um local padrão (aparece no topo), mas a visão começa sempre em "Todos os locais", para um item novo nunca sumir da equipe; o seletor no topo filtra (sem alterar o perfil) e volta a "Todos" a cada login.
 
 ## Auth e acesso
 

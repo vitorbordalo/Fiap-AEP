@@ -3,8 +3,10 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { emailPermitido, esquemaEmail } from "@/lib/auth/email";
+import { COOKIE_LOCAL } from "@/lib/auth/local-visao";
 import { caminhoSeguro, destinoAposLogin, LOGIN_ALUNO } from "@/lib/auth/rotas";
 import { COOKIE_SESSAO_DEMO, ehPapel, escreverSessaoDemo } from "@/lib/auth/sessao-demo";
+import { renomearPerfilDeTeste } from "@/lib/dados/demo";
 import { dominiosPermitidos, envPublico } from "@/lib/env";
 import { dentroDoLimite } from "@/lib/limite";
 import { MODO_DEMO } from "@/lib/modo";
@@ -77,15 +79,26 @@ export async function entrarDemo(formData: FormData) {
   if (!ehPapel(papel)) throw new Error("Perfil inválido.");
   const nome = formData.get("usuario")?.toString().trim().slice(0, 60) || NOME_PADRAO[papel];
 
-  (await cookies()).set(COOKIE_SESSAO_DEMO, escreverSessaoDemo({ papel, nome }), {
+  await iniciarSessaoDemo(papel, nome);
+
+  const next = caminhoSeguro(formData.get("next")?.toString());
+  redirect(destinoAposLogin(papel, next ? `?next=${encodeURIComponent(next)}` : ""));
+}
+
+/**
+ * Abre a sessão de demonstração: cookie com perfil e nome, nome gravado no perfil de teste e
+ * a visão da equipe de volta a "Todos os locais" (um local escolhido antes esconderia itens novos).
+ */
+async function iniciarSessaoDemo(papel: Papel, nome: string) {
+  const jar = await cookies();
+  jar.set(COOKIE_SESSAO_DEMO, escreverSessaoDemo({ papel, nome }), {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
   });
-
-  const next = caminhoSeguro(formData.get("next")?.toString());
-  redirect(destinoAposLogin(papel, next ? `?next=${encodeURIComponent(next)}` : ""));
+  jar.delete(COOKIE_LOCAL);
+  await renomearPerfilDeTeste(papel, nome);
 }
 
 /** Nome de cada persona da demonstração (scripts/seed/usuarios-teste.json). */
@@ -101,18 +114,15 @@ export async function trocarPerfilDemo(formData: FormData) {
   const papel = formData.get("papel");
   if (!ehPapel(papel)) throw new Error("Perfil inválido.");
 
-  (await cookies()).set(COOKIE_SESSAO_DEMO, escreverSessaoDemo({ papel, nome: NOME_PADRAO[papel] }), {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7,
-  });
+  await iniciarSessaoDemo(papel, NOME_PADRAO[papel]);
   redirect(destinoAposLogin(papel, ""));
 }
 
 export async function sair() {
   if (MODO_DEMO) {
-    (await cookies()).delete(COOKIE_SESSAO_DEMO);
+    const jar = await cookies();
+    jar.delete(COOKIE_SESSAO_DEMO);
+    jar.delete(COOKIE_LOCAL);
   } else {
     const supabase = await createClient();
     await supabase.auth.signOut();

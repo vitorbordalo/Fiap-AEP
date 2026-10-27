@@ -16,7 +16,7 @@ export default async function GestorLayout({ children }: { children: React.React
       <TopoDesktop
         inicio="/gestor"
         locais={locais}
-        localAtual={await localDaVisao(perfil)}
+        localAtual={await localDaVisao()}
         usuario={{ nome: perfil.nome || perfil.email, detalhe: "Coordenação" }}
       >
         <div className="border-t border-border">
